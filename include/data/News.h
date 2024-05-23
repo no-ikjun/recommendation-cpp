@@ -7,12 +7,13 @@
 
 class News : public Data {
 public:
-  News(std::string id, std::string content, std::string title, std::Category category);
+  News(std::string id, std::string content, std::string title, Category category);
+  void vectorEmbed();
   std::string getTitle();
-  std::Category getCategory();
+  Category getCategory();
 private:
   std::string title;
-  std::Category category;
+  Category category;
 };
 
 #endif
