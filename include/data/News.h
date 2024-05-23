@@ -1,18 +1,30 @@
+// include/data/News.h
 #ifndef NEWS_H
 #define NEWS_H
 
 #include <string>
-#include "Data.h"
+#include <iostream>
 #include "Category.h"
 
-class News : public Data {
+class News {
 public:
-  News(std::string id, std::string content, std::string title, std::Category category);
-  std::string getTitle();
-  std::Category getCategory();
+  News();  // Default constructor
+  News(const std::string& id, const std::string& title,
+       const std::string& content, Category category);
+
+  std::string getId() const;
+  std::string getTitle() const;
+  std::string getContent() const;
+  Category getCategory() const;
+
+  void serialize(std::ostream& os) const;
+  bool deserialize(std::istream& is);
+
 private:
+  std::string id;
   std::string title;
-  std::Category category;
+  std::string content;
+  Category category;
 };
 
-#endif
+#endif // NEWS_H
