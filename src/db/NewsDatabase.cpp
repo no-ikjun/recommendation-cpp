@@ -1,50 +1,68 @@
 #include "db/NewsDatabase.h"
 #include <fstream>
 #include <iostream>
-#include <vector>
 
 NewsDatabase::NewsDatabase(const std::string& filename) : filename(filename) {
-  // constructor implementation
+  loadFromFile();
 }
 
-void NewsDatabase::add(void* item) {
-  News* news = static_cast<News*>(item);
-  if (news) {
-    saveToFile(*news);
-  }
+NewsDatabase::~NewsDatabase() {
+  saveToFile();
 }
 
-News NewsDatabase::get(std::string id) {
-  std::vector<News> newsList = loadFromFile();
+void NewsDatabase::add(News* item) {
+  newsList.push_back(std::unique_ptr<News>(item));
+  saveToFile();
+}
+
+std::vector<News*> NewsDatabase::getAllData() const {
+  std::vector<News*> plainList;
   for (const auto& news : newsList) {
-    if (news.getId() == id) {
-      return news;
+    plainList.push_back(news.get());
+  }
+  return plainList;
+}
+
+News* NewsDatabase::getDataById(const std::string& id) const {
+  for (const auto& news : newsList) {
+    if (news->getId() == id) {
+      return news.get();
     }
   }
-  throw std::invalid_argument("No news with id " + id + " found.");
+  return nullptr;
 }
 
-void NewsDatabase::saveToFile(const News& news) {
-  std::ofstream file(filename, std::ios::binary | std::ios::app);
+void NewsDatabase::modifyData(const std::string& id, News* item) {
+  for (auto& news : newsList) {
+    if (news->getId() == id) {
+      news.reset(item);
+      saveToFile();
+      break;
+    }
+  }
+}
+
+void NewsDatabase::saveToFile() const {
+  std::ofstream file(filename, std::ios::binary | std::ios::trunc);
   if (!file) {
     std::cerr << "Cannot open file " << filename << " for writing." << std::endl;
     return;
   }
-  news.serialize(file);
+  for (const auto& news : newsList) {
+    news->serialize(file);
+  }
   file.close();
 }
 
-std::vector<News> NewsDatabase::loadFromFile() {
-  std::vector<News> newsList;
+void NewsDatabase::loadFromFile() {
   std::ifstream file(filename, std::ios::binary);
   if (!file) {
     std::cerr << "Cannot open file " << filename << " for reading." << std::endl;
-    return newsList;
+    return;
   }
-  News news;
-  while (news.deserialize(file)) {
-    newsList.push_back(news);
+  News* news = nullptr;
+  while ((news = new News(), news->deserialize(file))) {
+    newsList.push_back(std::unique_ptr<News>(news));
   }
   file.close();
-  return newsList;
 }

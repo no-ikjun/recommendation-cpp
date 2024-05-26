@@ -1,50 +1,66 @@
 #include "db/UserDatabase.h"
 #include <fstream>
 #include <iostream>
-#include <vector>
 
 UserDatabase::UserDatabase(const std::string& filename) : filename(filename) {
-  // constructor implementation
+  loadFromFile();
 }
 
-void UserDatabase::add(void* item) {
-  User* user = static_cast<User*>(item);
-  if (user) {
-    saveToFile(*user);
-  }
+UserDatabase::~UserDatabase() {
+  saveToFile();
 }
 
-User UserDatabase::get(std::string id) {
-  std::vector<User> userList = loadFromFile();
+void UserDatabase::add(User* item) {
+  userList.push_back(std::unique_ptr<User>(item));
+  saveToFile();
+}
+
+std::vector<User*> UserDatabase::getAllData() const {
+  std::cerr << "getAllData is not supported for UserDatabase." << std::endl;
+  throw std::logic_error("Operation not supported");
+  return std::vector<User*>();
+}
+
+User* UserDatabase::getDataById(const std::string& id) const {
   for (const auto& user : userList) {
-    if (user.getId() == id) {
-      return user;
+    if (user->getId() == id) {
+      return user.get();
     }
   }
-  throw std::invalid_argument("No user with id " + id + " found.");
+  return nullptr;
 }
 
-void UserDatabase::saveToFile(const User& user) {
-  std::ofstream file(filename, std::ios::binary | std::ios::app);
+void UserDatabase::modifyData(const std::string& id, User* item) {
+  for (auto& user : userList) {
+    if (user->getId() == id) {
+      user.reset(item);
+      saveToFile();
+      break;
+    }
+  }
+}
+
+void UserDatabase::saveToFile() const {
+  std::ofstream file(filename, std::ios::binary | std::ios::trunc);
   if (!file) {
     std::cerr << "Cannot open file " << filename << " for writing." << std::endl;
     return;
   }
-  user.serialize(file);
+  for (const auto& user : userList) {
+    user->serialize(file);
+  }
   file.close();
 }
 
-std::vector<User> UserDatabase::loadFromFile() {
-  std::vector<User> userList;
-  std::ifstream file (filename, std::ios::binary);
+void UserDatabase::loadFromFile() {
+  std::ifstream file(filename, std::ios::binary);
   if (!file) {
     std::cerr << "Cannot open file " << filename << " for reading." << std::endl;
-    return userList;
+    return;
   }
-  User user;
-  while (user.deserialize(file)) {
-    userList.push_back(user);
+  User* user = nullptr;
+  while ((user = new User(), user->deserialize(file))) {
+    userList.push_back(std::unique_ptr<User>(user));
   }
   file.close();
-  return userList;
 }

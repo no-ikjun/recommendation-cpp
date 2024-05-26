@@ -3,25 +3,26 @@
 
 #include "db/Database.h"
 #include "data/News.h"
+#include <memory>
 #include <string>
 #include <vector>
 
-class NewsDatabase : public Database {
-private:
-  std::string filename;
-
+class NewsDatabase : public Database<News> {
 public:
   explicit NewsDatabase(const std::string& filename);
+  ~NewsDatabase();
 
-  void add(void* item) override;
+  void add(News* item) override;
+  std::vector<News*> getAllData() const override;
+  News* getDataById(const std::string& id) const override;
+  void modifyData(const std::string& id, News* item) override;
 
-  News get(std::string id);
+private:
+  std::string filename; 
+  mutable std::vector<std::unique_ptr<News>> newsList;
 
-  void saveToFile(const News& news);
-
-  std::vector<News> loadFromFile();
-
-  virtual ~NewsDatabase() {}
+  void saveToFile() const;
+  void loadFromFile();
 };
 
-#endif
+#endif // NEWSDATABASE_H
