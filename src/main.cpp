@@ -12,7 +12,7 @@ int main() {
   UserDatabase userDb(userFilename);
 
   auto user = std::make_unique<User>("1", "John Doe", "1234");
-  userDb.add(std::move(user));  // UserDatabase는 std::unique_ptr<User>를 받도록 수정
+  userDb.add(std::move(user));
 
   User* retrievedUser = userDb.getDataById("1");
   if (retrievedUser) {
