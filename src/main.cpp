@@ -24,8 +24,8 @@ int main() {
   std::string newsFilename = "./data/news_database.bin";
   NewsDatabase newsDb(newsFilename);
 
-  auto news1 = std::make_unique<News>("3", "AI Advances", "New AI algorithms have been developed.", Category::IT);
-  auto news2 = std::make_unique<News>("4", "Space Exploration", "Mars mission plans unveiled.", Category::SCIENCE);
+  auto news1 = std::make_unique<News>("5", "AI Advances", "New AI algorithms have been developed.", Category::IT);
+  auto news2 = std::make_unique<News>("6", "Space Exploration", "Mars mission plans unveiled.", Category::SCIENCE);
 
   newsDb.add(std::move(news1));
   newsDb.add(std::move(news2));
