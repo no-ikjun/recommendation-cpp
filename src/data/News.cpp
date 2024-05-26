@@ -1,5 +1,5 @@
-// src/data/News.cpp
 #include "data/News.h"
+#include <iostream>
 
 News::News() : id(""), title(""), content(""), category(Category::IT) {}
 

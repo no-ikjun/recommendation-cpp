@@ -1,9 +1,7 @@
-// include/data/News.h
 #ifndef NEWS_H
 #define NEWS_H
 
 #include <string>
-#include <iostream>
 #include "Category.h"
 
 class News {

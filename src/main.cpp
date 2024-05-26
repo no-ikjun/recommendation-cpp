@@ -3,11 +3,21 @@
 #include "data/News.h"
 #include "data/Category.h"
 #include "db/NewsDatabase.h"
+#include "db/UserDatabase.h"
 #include <vector>
 
 int main() {
-  std::string filename = "news_database.bin";
-  NewsDatabase db(filename);
+  std::string userFilename = "user_database.bin";
+  UserDatabase userDb(userFilename);
+
+  User user("1", "John Doe", "1234");
+  userDb.add(&user);
+
+  User retrievedUser = userDb.get("1");
+  std::cout << "Retrieved User: " << retrievedUser.getName() << std::endl;
+
+  std::string newsFilename = "news_database.bin";
+  NewsDatabase db(newsFilename);
 
   News news1("1", "AI Advances", "New AI algorithms have been developed.", Category::IT);
   News news2("2", "Space Exploration", "Mars mission plans unveiled.", Category::SCIENCE);
