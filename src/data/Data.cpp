@@ -28,12 +28,25 @@ void Data::serialize(std::ostream& os) const {
 
 bool Data::deserialize(std::istream& is) {
   std::getline(is, id, '\0');
+  if (is.fail()) return false;
+
   std::getline(is, content, '\0');
+  if (is.fail()) return false;
+
   size_t vectorSize;
   is.read(reinterpret_cast<char*>(&vectorSize), sizeof(vectorSize));
-  featureVector.resize(vectorSize);
-  for (double& feature : featureVector) {
-      is.read(reinterpret_cast<char*>(&feature), sizeof(feature));
+  if (is.fail() || vectorSize > 100000) {
+    return false;
   }
-  return !is.fail();
+
+  featureVector.clear(); // 기존 벡터를 클리어하고 새로운 크기로 조정
+  featureVector.reserve(vectorSize);
+  for (size_t i = 0; i < vectorSize; ++i) {
+    double feature;
+    is.read(reinterpret_cast<char*>(&feature), sizeof(feature));
+    if (is.fail()) return false;
+    featureVector.push_back(feature);
+  }
+
+  return true;
 }

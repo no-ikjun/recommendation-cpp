@@ -24,12 +24,12 @@ int main() {
   std::string newsFilename = "./data/news_database.bin";
   NewsDatabase newsDb(newsFilename);
 
-  // std::vector<double> features1 = {0.5, 0.8};
-  // auto news1 = std::make_unique<News>("10", "AI Advances", "New AI algorithms have been developed.", Category::IT, features1);
-  // auto news2 = std::make_unique<News>("9", "Space Exploration", "Mars mission plans unveiled.", Category::SCIENCE, features1);
+  std::vector<double> features1 = {0.5, 0.8};
+  auto news1 = std::make_unique<News>("12", "AI Advances 2", "New AI algorithms have been developed.", Category::IT, features1);
+  auto news2 = std::make_unique<News>("13", "Space Exploration 2", "Mars mission plans unveiled.", Category::SCIENCE, features1);
 
-  // newsDb.add(std::move(news1));
-  // newsDb.add(std::move(news2));
+  newsDb.add(std::move(news1));
+  newsDb.add(std::move(news2));
 
   std::vector<News*> newsList = newsDb.getAllData();
   for (const News* news : newsList) {
