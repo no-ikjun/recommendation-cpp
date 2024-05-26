@@ -1,7 +1,7 @@
 #ifndef CATEGORY_H
 #define CATEGORY_H
 
-enum Category {
+enum class Category {
   IT, 
   ENTERTAINMENT, 
   SCIENCE
