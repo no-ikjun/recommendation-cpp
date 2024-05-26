@@ -11,8 +11,8 @@ int main() {
   std::string userFilename = "./data/user_database.bin";
   UserDatabase userDb(userFilename);
 
-  auto user = std::make_unique<User>("1", "John Doe", "1234");
-  userDb.add(std::move(user));
+  // auto user = std::make_unique<User>("1", "John Doe", "1234");
+  // userDb.add(std::move(user));
 
   User* retrievedUser = userDb.getDataById("1");
   if (retrievedUser) {
@@ -24,11 +24,12 @@ int main() {
   std::string newsFilename = "./data/news_database.bin";
   NewsDatabase newsDb(newsFilename);
 
-  auto news1 = std::make_unique<News>("5", "AI Advances", "New AI algorithms have been developed.", Category::IT);
-  auto news2 = std::make_unique<News>("6", "Space Exploration", "Mars mission plans unveiled.", Category::SCIENCE);
+  // std::vector<double> features1 = {0.5, 0.8};
+  // auto news1 = std::make_unique<News>("10", "AI Advances", "New AI algorithms have been developed.", Category::IT, features1);
+  // auto news2 = std::make_unique<News>("9", "Space Exploration", "Mars mission plans unveiled.", Category::SCIENCE, features1);
 
-  newsDb.add(std::move(news1));
-  newsDb.add(std::move(news2));
+  // newsDb.add(std::move(news1));
+  // newsDb.add(std::move(news2));
 
   std::vector<News*> newsList = newsDb.getAllData();
   for (const News* news : newsList) {

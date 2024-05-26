@@ -3,17 +3,22 @@
 
 #include <string>
 #include <vector>
+#include <ostream>
+#include <istream>
 
-// Abstract class for any data type
 class Data {
-protected:
+public:
   Data(std::string id, std::string content, std::vector<double> featureVector);
-  std::string getId();
-  virtual std::string getContent() = 0;
-  virtual std::vector<double> getFeatureVector() = 0;
-  void setContent(std::string content);
-  void setFeatureVector(std::vector<double> featureVector);
-private:
+  virtual ~Data() = default;
+
+  std::string getId() const;
+  virtual std::string getContent() const;
+  virtual std::vector<double> getFeatureVector() const;
+
+  virtual void serialize(std::ostream& os) const;
+  virtual bool deserialize(std::istream& is);
+
+protected:
   std::string id;
   std::string content;
   std::vector<double> featureVector;
