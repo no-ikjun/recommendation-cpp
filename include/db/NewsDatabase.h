@@ -12,7 +12,7 @@ public:
   explicit NewsDatabase(const std::string& filename);
   ~NewsDatabase();
 
-  void add(News* item) override;
+  void add(std::unique_ptr<News> item) override;
   std::vector<News*> getAllData() const override;
   News* getDataById(const std::string& id) const override;
   void modifyData(const std::string& id, News* item) override;
@@ -21,8 +21,8 @@ private:
   std::string filename; 
   mutable std::vector<std::unique_ptr<News>> newsList;
 
-  void saveToFile() const;
-  void loadFromFile();
+  void saveToFile() const override;
+  void loadFromFile() override;
 };
 
 #endif // NEWSDATABASE_H

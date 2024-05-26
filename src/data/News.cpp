@@ -33,6 +33,7 @@ void News::serialize(std::ostream& os) const {
 
 bool News::deserialize(std::istream& is) {
   std::getline(is, id, '\0');
+  if (is.fail()) return false;
   std::getline(is, title, '\0');
   std::getline(is, content, '\0');
   int categoryValue;

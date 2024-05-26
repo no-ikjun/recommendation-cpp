@@ -1,6 +1,7 @@
 #include <iostream>
 #include "data/News.h"
 #include "data/Category.h"
+#include "data/User.h"
 #include "db/NewsDatabase.h"
 #include "db/UserDatabase.h"
 #include <vector>
@@ -10,9 +11,8 @@ int main() {
   std::string userFilename = "./data/user_database.bin";
   UserDatabase userDb(userFilename);
 
-  // User 객체를 동적으로 생성하고 unique_ptr로 관리
-  std::unique_ptr<User> user = std::make_unique<User>("1", "John Doe", "1234");
-  userDb.add(user.get()); // add 메서드에 User 포인터를 넘김
+  auto user = std::make_unique<User>("1", "John Doe", "1234");
+  userDb.add(std::move(user));  // UserDatabase는 std::unique_ptr<User>를 받도록 수정
 
   User* retrievedUser = userDb.getDataById("1");
   if (retrievedUser) {
@@ -24,12 +24,11 @@ int main() {
   std::string newsFilename = "./data/news_database.bin";
   NewsDatabase newsDb(newsFilename);
 
-  // News 객체들을 동적으로 생성하고 unique_ptr로 관리
-  std::unique_ptr<News> news1 = std::make_unique<News>("3", "AI Advances", "New AI algorithms have been developed.", Category::IT);
-  std::unique_ptr<News> news2 = std::make_unique<News>("4", "Space Exploration", "Mars mission plans unveiled.", Category::SCIENCE);
+  auto news1 = std::make_unique<News>("3", "AI Advances", "New AI algorithms have been developed.", Category::IT);
+  auto news2 = std::make_unique<News>("4", "Space Exploration", "Mars mission plans unveiled.", Category::SCIENCE);
 
-  newsDb.add(news1.get());
-  newsDb.add(news2.get());
+  newsDb.add(std::move(news1));
+  newsDb.add(std::move(news2));
 
   std::vector<News*> newsList = newsDb.getAllData();
   for (const News* news : newsList) {

@@ -12,7 +12,7 @@ public:
   explicit UserDatabase(const std::string& filename);
   ~UserDatabase();
 
-  void add(User* item) override;
+  void add(std::unique_ptr<User> item) override;
   std::vector<User*> getAllData() const override;
   User* getDataById(const std::string& id) const override;
   void modifyData(const std::string& id, User* item) override;
@@ -21,8 +21,8 @@ private:
   std::string filename; 
   mutable std::vector<std::unique_ptr<User>> userList;
 
-  void saveToFile() const;
-  void loadFromFile();
+  void saveToFile() const override;
+  void loadFromFile() override;
 };
 
 #endif // USERDATABASE_H

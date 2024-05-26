@@ -10,8 +10,8 @@ UserDatabase::~UserDatabase() {
   saveToFile();
 }
 
-void UserDatabase::add(User* item) {
-  userList.push_back(std::unique_ptr<User>(item));
+void UserDatabase::add(std::unique_ptr<User> item) {
+  userList.push_back(std::move(item));
   saveToFile();
 }
 

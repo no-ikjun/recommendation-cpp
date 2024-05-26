@@ -10,8 +10,8 @@ NewsDatabase::~NewsDatabase() {
   saveToFile();
 }
 
-void NewsDatabase::add(News* item) {
-  newsList.push_back(std::unique_ptr<News>(item));
+void NewsDatabase::add(std::unique_ptr<News> item) {
+  newsList.push_back(std::move(item));
   saveToFile();
 }
 
