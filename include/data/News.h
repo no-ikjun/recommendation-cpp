@@ -8,9 +8,17 @@
 class News : public Data {
 public:
   News(std::string id, std::string content, std::string title, Category category);
-  void vectorEmbed();
-  std::string getTitle();
-  Category getCategory();
+
+  std::string getContent() override;
+  
+  void vectorEmbed() override;
+
+  std::string getTitle() const;
+  void setTitle(std::string);
+
+  Category getCategory() const;
+  void setCategory(Category);
+  
 private:
   std::string title;
   Category category;
