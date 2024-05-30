@@ -1,3 +1,6 @@
+#ifndef WORD2VEC_H
+#define WORD2VEC_H
+
 #include "Vocabulary.h"
 
 #include <vector>
@@ -17,3 +20,5 @@ private:
   std::vector<std::vector<double>> encoderWeights;
   std::vector<std::vector<double>> decoderWeights;
 };
+
+#endif

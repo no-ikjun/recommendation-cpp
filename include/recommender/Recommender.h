@@ -1,3 +1,6 @@
+#ifndef RECOMMENDER_H
+#define RECOMMENDER_H
+
 #include "User.h"
 #include "NewsDatabase.h"
 #include "Data.h"
@@ -20,3 +23,5 @@ private:
 
   std::string prevRecommendedContentID;
 };
+
+#endif
