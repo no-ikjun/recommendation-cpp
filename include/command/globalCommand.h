@@ -6,7 +6,8 @@
 
 class GlobalCommand {
 public:
-  bool continuePrompt();
+  static bool continuePrompt();
   void showMenu();
-  
 };
+
+#endif // GLOBALCOMMAND_H
