@@ -1,4 +1,5 @@
 #include "../include/recommender/Word2Vec.h"
+#include "../include/recommender/Vocabulary.h"
 
 #include <vector>
 #include <array>
@@ -6,10 +7,7 @@
 #include <utility> // pair
 
 int main() {
-  Vocabulary vocab;
-  vocab.createVocabulary("./dataset/dataset_sm");
-
-  Word2Vec word2vec(100, vocab);
+  Word2Vec word2vec(100);
   word2vec.generateCBOW("./dataset/dataset_sm", 5);
   std::vector<std::pair<int, int>> cbow = word2vec.getCBOW();
 

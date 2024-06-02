@@ -1,14 +1,15 @@
 #include "../../include/recommender/Word2Vec.h"
 #include "../../include/recommender/Tokenizer.h"
+#include "../../include/recommender/Vocabulary.h"
 
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <utility> // pair
 
-Word2Vec::Word2Vec(int dimension, Vocabulary& vocabulary) {
-  this->vocabulary = vocabulary;
-}
+Word2Vec::Word2Vec(int dimension): vocabulary(10000) {
+  this->vocabulary.createVocabulary("./dataset/dataset_sm");
+};
 
 std::vector<std::pair<int, int>> Word2Vec::getCBOW() {
   return this->CBOW;

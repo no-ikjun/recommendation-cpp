@@ -3,7 +3,7 @@
 #include <iomanip>
 
 int main() {
-  Vocabulary vocab(100);
+  Vocabulary vocab(10000);
   vocab.createVocabulary("./dataset/dataset_sm");
   std::cout << "100 tokens among " << vocab.getVocab().size() << std::endl;
   int i = 0;
