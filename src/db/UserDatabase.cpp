@@ -9,6 +9,10 @@ UserDatabase::UserDatabase(const std::string& filename) : filename(filename) {
 
 void UserDatabase::add(void* item) {
   User* user = static_cast<User*>(item);
+  User duplicatedUser = get(user->getId());
+  if (duplicatedUser.getId() == user->getId()) {
+    throw std::runtime_error("User with id " + user->getId() + " already exists.");
+  }
   if (user) {
     saveToFile(*user);
   }
