@@ -7,7 +7,7 @@
 #include <iostream>
 #include <utility> // pair
 
-Word2Vec::Word2Vec(int dimension): vocabulary(10000) {
+Word2Vec::Word2Vec(int dimension, int vocabularySize): vocabulary(vocabularySize) {
   this->vocabulary.createVocabulary("./dataset/dataset_sm");
 };
 
@@ -58,7 +58,10 @@ void Word2Vec::generateCBOW(std::filesystem::path datasetPath, int contextLength
           }
         }
       }
-      std::cout << "      Continuous bag of words gernerated." << std::endl;
+      std::cout 
+        << "      Total " << this->CBOW.size()
+        << "of continuous bag of words gernerated." 
+      << std::endl;
 
       std::cout << "    Closing " << datafile << "..." << std::endl;
       file.close();

@@ -8,7 +8,7 @@
 
 class Word2Vec {
 public:
-  Word2Vec(int dimension);
+  Word2Vec(int dimension, int vocabularySize);
   // std::vector<double> embed(std::string) override;
   void generateCBOW(std::filesystem::path, int contextLength); // Continuous Bag of words
   std::vector<std::pair<int, int>> getCBOW();
