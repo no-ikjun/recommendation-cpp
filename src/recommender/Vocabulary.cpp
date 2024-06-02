@@ -79,19 +79,30 @@ void Vocabulary::createVocabulary(std::filesystem::path datasetPath) {
     }
   }
   
-  std::cout 
-    << "  Vocabulary of total " << histogram.size() << " tokens is created"
-  << std::endl;
-
   if(histogram.size() > this->maxVocabSize) {
     std::cout 
       << "  Removing " << histogram.size() - this->maxVocabSize 
       << " tokens from the vocabulary to match the maximum vocabulary size " << this->maxVocabSize
     << std::endl;
 
-    std::vector<std::pair<std::string, int>> vectorized_vocab(histogram.begin(), histogram.end());
-    std::sort(vectorized_vocab.begin(), vectorized_vocab, [](std::pair<std::string, int> a, std::pair<std::string, int> b) -> bool {return a.second < b.second});
-    // TODO: 
+    std::vector<std::pair<std::string, int>> vectorized_histogram(histogram.begin(), histogram.end());
+    std::sort(
+      vectorized_histogram.begin(), 
+      vectorized_histogram.end(), 
+      [](
+        std::pair<std::string, int> a, 
+        std::pair<std::string, int> b
+      ) -> bool {return a.second > b.second;}
+    );
+    for(auto it = vectorized_histogram.begin(); it != vectorized_histogram.end() - (histogram.size() - this->maxVocabSize); ++it) {
+      it->second = it - vectorized_histogram.begin();
+    }
+    this->vocab = std::unordered_map<std::string, int>(vectorized_histogram.begin(), vectorized_histogram.end() - (histogram.size() - this->maxVocabSize + 1));
+    this->vocab["<unk>"] = this->vocab.size();
   }
-  
+
+  std::cout 
+    << "  Vocabulary of total " << this->vocab.size() << " tokens is created"
+  << std::endl;
+
 }
