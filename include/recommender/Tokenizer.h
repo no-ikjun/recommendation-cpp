@@ -6,7 +6,7 @@
 #include <string>
 #include <regex>
 
-std::vector<std::string> tokenize (
+inline std::vector<std::string> tokenize (
   std::string& string, 
   char delimiter = ' ', 
   std::regex ignore = std::regex(".*[^a-zA-Z0-9].*")

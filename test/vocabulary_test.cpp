@@ -12,4 +12,5 @@ int main() {
     std::cout << std::setw(7) << id << std::setw(15) << std::left << token << std::endl;
     i++;
   }
+  std::cout << vocab.getVocab()["alsdklfahsdkfhakjsdhklgahlsdkjfa"] << std::endl;
 }
