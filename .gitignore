@@ -1,1 +1,3 @@
 *.exe
+dataset_parsing/
+dataset/
