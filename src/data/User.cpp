@@ -11,6 +11,8 @@ std::string User::getId() const { return id; }
 
 std::string User::getName() const { return name; }
 
+std::string User::getPassword() const { return password; }
+
 void User::serialize(std::ostream& os) const {
   os.write(id.c_str(), id.size() + 1);
   os.write(name.c_str(), name.size() + 1);
