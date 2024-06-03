@@ -14,9 +14,9 @@ int main() {
   UserDatabase* userDb = UserDatabase::getInstance(userFilename);
   //newsDB 객체 생성
   std::string newsFilename = "news_database.bin";
-  NewsDatabase db(newsFilename);
+  NewsDatabase* newsDb = NewsDatabase::getInstance(newsFilename);
 
-  // //회원가입
+  //회원가입
   // UserCommand userCommand(userDb);
   // userCommand.signUp();
 
@@ -27,16 +27,16 @@ int main() {
   }
  
 
-  // News news1("1", "AI Advances", "New AI algorithms have been developed.", Category::IT);
-  // News news2("2", "Space Exploration", "Mars mission plans unveiled.", Category::SCIENCE);
+  News news1("1", "AI Advances", "New AI algorithms have been developed.", Category::IT);
+  News news2("2", "Space Exploration", "Mars mission plans unveiled.", Category::SCIENCE);
 
-  // db.add(&news1);
-  // db.add(&news2);
+  newsDb->add(&news1);
+  newsDb->add(&news2);
 
-  // std::vector<News> newsList = db.loadFromFile();
-  // for (const auto& news : newsList) {
-  //   std::cout << "Retrieved News: " << news.getTitle() << " - " << news.getContent() << std::endl;
-  // }
+  std::vector<News> newsList = newsDb->loadFromFile();
+  for (const auto& news : newsList) {
+    std::cout << "Retrieved News: " << news.getTitle() << " - " << news.getContent() << std::endl;
+  }
 
   return 0;
 }
