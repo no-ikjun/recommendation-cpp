@@ -11,6 +11,7 @@ public:
 
   std::string getId() const;
   std::string getName() const;
+  std::string getPassword() const;
 
   void serialize(std::ostream& os) const;
   bool deserialize(std::istream& is);

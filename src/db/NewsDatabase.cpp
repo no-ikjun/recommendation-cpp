@@ -1,16 +1,38 @@
 #include "db/NewsDatabase.h"
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
+#include <string>
+#include <mutex>
 #include <vector>
 
-NewsDatabase::NewsDatabase(const std::string& filename) : filename(filename) {
-  // constructor implementation
+NewsDatabase* NewsDatabase::instance = nullptr;
+std::mutex NewsDatabase::mutex;
+
+NewsDatabase::NewsDatabase(const std::string& filename) : filename(filename) {}
+
+// 싱글턴 인스턴스 반환 함수
+NewsDatabase* NewsDatabase::getInstance(const std::string& filename) {
+  std::lock_guard<std::mutex> lock(mutex);
+  if (instance == nullptr) {
+    instance = new NewsDatabase(filename);
+  }
+  return instance;
 }
 
 void NewsDatabase::add(void* item) {
   News* news = static_cast<News*>(item);
   if (news) {
-    saveToFile(*news);
+    try {
+      News duplicatedNews = get(news->getId());
+      if (duplicatedNews.getId() == news->getId()) {
+        throw std::runtime_error("News with id " + news->getId() + " already exists.");
+      }
+    } catch (const std::invalid_argument& e) {
+      saveToFile(*news);
+    }
+  } else {
+    std::cerr << "Error: Null news pointer passed to add function." << std::endl;
   }
 }
 
