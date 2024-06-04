@@ -106,3 +106,7 @@ void Vocabulary::createVocabulary(std::filesystem::path datasetPath) {
   << std::endl;
 
 }
+
+int Vocabulary::getVocabSize() {
+  return this->vocab.size();
+}
