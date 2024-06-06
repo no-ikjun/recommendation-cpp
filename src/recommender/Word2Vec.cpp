@@ -1,6 +1,7 @@
 #include "../../include/recommender/Word2Vec.h"
 #include "../../include/recommender/Tokenizer.h"
 #include "../../include/recommender/Vocabulary.h"
+#include "../../include/LinearAlgebra/Matrix.h"
 
 #include <filesystem>
 #include <fstream>
@@ -11,6 +12,7 @@
 #include <cmath> 
 
 Word2Vec::Word2Vec(int dimension, int vocabularySize, int contextLength): vocabulary(vocabularySize) {
+  this->dimension = dimension;
   this->contextLength = contextLength;
   this->vocabulary.createVocabulary("./dataset/dataset_sm");
 };
@@ -70,7 +72,7 @@ void Word2Vec::generateCBOW(std::filesystem::path datasetPath, int contextLength
       }
       std::cout 
         << "      Total " << this->CBOW.size()
-        << "of continuous bag of words gernerated." 
+        << " of continuous bag of words gernerated." 
       << std::endl;
 
       std::cout << "    Closing " << datafile << "..." << std::endl;
@@ -84,64 +86,24 @@ void Word2Vec::generateCBOW(std::filesystem::path datasetPath, int contextLength
   }
 }
 
-double getRandomNumber(double mean, double std) {
-  std::random_device randomDevice; 
-  std::mt19937 generator(randomDevice());
-  std::normal_distribution<> distribution(mean, std);
-  return distribution(generator);
-}
-
-std::vector<std::vector<double>> generate_random_matrix(int rows, int cols, double mean=0, double std=1) {
-  std::vector<std::vector<double>> matrix(rows, std::vector<double>(cols));
-  for (auto i=matrix.begin(); i != matrix.end(); ++i) {
-    for(auto j=(*i).begin(); j != (*i).end(); ++j) {
-      *j = getRandomNumber(mean, std);
-    }
-  }
-  return matrix;
-}
-
-void softmax(std::vector<std::vector<double>>& matrix) {
-  for (auto i=matrix.begin(); i != matrix.end(); ++i) {
-    double sum = std::numeric_limits<double>::min();
-    for(auto j=(*i).begin(); j != (*i).end(); ++j) {
-      *j = std::exp(*j);
-      sum += *j;
-    }
-    for(auto j=(*i).begin(); j != (*i).end(); ++j) {
-      *j /= sum;
-    }
-  }
-}
-
-std::vector<double> one_hot_encode(int index, int size) {
-  std::vector<double> one_hot_vector(size, 0.);
-  one_hot_vector[index] = 1.;
-  return one_hot_vector;
-}
-
 void Word2Vec::train(int epoch, double alpha) {
   std::cout << "@Word2Vec" << std::endl;
 
+  std::cout << "  Initializing weights..." << std::endl;
+
+  this->encoderWeights = LinearAlgebra::Matrix(this->vocabulary.getVocabSize(), this->dimension, true);
+  this->decoderWeights = LinearAlgebra::Matrix(this->dimension, this->vocabulary.getVocabSize(), true);
+  std::cout << "    Initialized encoder weights" << std::endl;
+  this->encoderWeights.print();
+  std::cout << "    Initialized decoder weights" << std::endl;
+  this->decoderWeights.print();
+
   std::cout << "  Training Word2Vec model..." << std::endl;
 
-  this->encoderWeights = generate_random_matrix(this->vocabulary.getVocabSize(), this->dimension);
-  this->decoderWeights = generate_random_matrix(this->dimension, this->vocabulary.getVocabSize());
-
+  double totalLoss = 0.;
   for(int e = 0; e < epoch; ++e) {
-    std::cout << "Epoch " << e + 1 << "/" << epoch << std::endl;
-
-    double totalLoss = 0.;
-
-    for(auto& [center_token, context_tokens]: this->CBOW) {
-      std::vector<double> inputVector(this->dimension, 0.);
-      for(int context_token: context_tokens) {
-        for(int d = 0; d < dimension; ++d) {
-          inputVector[d] += encoderWeights[context_token][d];
-        }
-      }
-
-      std::vector<double> outputVector = inputVector;
-    }
+    std::cout << "    Epoch " << e + 1 << "/" << epoch << std::endl;
+    LinearAlgebra::Matrix prediction = this->encoderWeights * this->decoderWeights * LinearAlgebra::Matrix(this->vocabulary.getVocabSize(), 1, true);
+    prediction.print();
   }
 }

@@ -2,7 +2,7 @@
 #define WORD2VEC_H
 
 #include "Vocabulary.h"
-#include "Matrix.h"
+#include "../LinearAlgebra/Matrix.h"
 
 #include <vector>
 #include <utility> // pair
@@ -23,8 +23,8 @@ private:
   int contextLength;
   std::vector<std::pair<int, std::vector<int>>> CBOW;
   int dimension;
-  std::vector<std::vector<double>> encoderWeights;
-  std::vector<std::vector<double>> decoderWeights;
+  LinearAlgebra::Matrix encoderWeights;
+  LinearAlgebra::Matrix decoderWeights;
 };
 
 #endif

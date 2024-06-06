@@ -9,7 +9,7 @@
 
 
 int main() {
-  Word2Vec word2vec(100, 10000, 3);
+  Word2Vec word2vec(20, 50, 3);
   word2vec.generateCBOW("./dataset/dataset_sm", 3);
   std::vector<std::pair<int, std::vector<int>>> cbow = word2vec.getCBOW();
 
