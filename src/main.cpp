@@ -23,7 +23,9 @@ int main() {
   GlobalCommand globalCommand(userDb, newsDb);
   globalCommand.showMenu();
 
-  std::cout << session->getUserName() << std::endl;
+  //로그인
+  // UserCommand userCommand(userDb);
+  // userCommand.signIn();
 
   //회원가입
   // UserCommand userCommand(userDb);
