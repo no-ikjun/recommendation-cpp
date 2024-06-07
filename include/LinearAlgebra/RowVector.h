@@ -9,6 +9,7 @@
 namespace LinearAlgebra {
 
   class ColumnVector; // Forward declaration for resolving circular dependency
+  class Matrix;
 
   class RowVector: public Vector {
   public:
@@ -19,9 +20,10 @@ namespace LinearAlgebra {
     RowVector operator+(const RowVector&) const;
     RowVector operator-(const RowVector&) const;
     double operator*(const ColumnVector&) const;
-    ColumnVector operator*(const Matrix&) const;
+    RowVector operator*(const Matrix&) const;
     RowVector& operator+=(const RowVector&);
     RowVector& operator-=(const RowVector&);
+    RowVector& operator*=(const Matrix&);
     double dot(const RowVector&) const;
     double euclideanDistance(const RowVector&) const;
     double cosineSimilarity(const RowVector&) const;

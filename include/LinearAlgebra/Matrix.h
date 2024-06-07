@@ -8,6 +8,10 @@
 #include <functional>
 
 namespace LinearAlgebra{
+
+  class ColumnVector;
+  class RowVector;
+
   class Matrix {
   public: 
     Matrix();
@@ -19,9 +23,13 @@ namespace LinearAlgebra{
     double& operator()(int row, int col);
     const double& operator()(int row, int col) const;
 
+    RowVector getRow(int index) const;
+    ColumnVector getColumn(int index) const;
+
     Matrix operator+(const Matrix&) const;
     Matrix operator-(const Matrix&) const;
     Matrix operator*(const Matrix&) const;
+    ColumnVector operator*(const ColumnVector&) const;
     Matrix& operator+=(const Matrix&);
     Matrix& operator-=(const Matrix&);
     Matrix& operator*=(const Matrix&);

@@ -1,6 +1,5 @@
 #include "../../include/LinearAlgebra/Vector.h"
 #include "../../include/LinearAlgebra/RowVector.h"
-#include "../../include/LinearAlgebra/RowVector.h"
 #include "../../include/LinearAlgebra/Utils.h"
 
 #include <cmath>
@@ -40,6 +39,17 @@ double RowVector::operator*(const ColumnVector& other) const {
   return result;
 }
 
+RowVector RowVector::operator*(const Matrix& other) const {
+  if(this->getDimension() != other.shape().first) {
+    throw std::invalid_argument("Shape mismatch for row vector and matrix multiplication");
+  }
+  RowVector result(other.shape().second);
+  for(int i = 0; i < other.shape().second; ++i) {
+    result(i) = (*this) * other.getColumn(i);
+  }
+  return result;
+}
+
 RowVector& RowVector::operator+=(const RowVector& other) {
   forInZip(*this, other, [] (double& element1, const double& element2) {
     element1 += element2;
@@ -51,6 +61,16 @@ RowVector& RowVector::operator-=(const RowVector& other) {
   forInZip(*this, other, [] (double& element1, const double& element2) {
     element1 -= element2;
   });
+  return *this;
+}
+
+RowVector& RowVector::operator*=(const Matrix& other) {
+  if(this->getDimension() != other.shape().first) {
+    throw std::invalid_argument("Shape mismatch for row vector and matrix multiplication");
+  }
+  for(int i = 0; i < other.shape().second; ++i) {
+    (*this)(i) = (*this) * other.getColumn(i);
+  }
   return *this;
 }
 

@@ -8,7 +8,7 @@
 using namespace LinearAlgebra;
 
 Vector::Vector(int dimension, bool randomize=false, double mean=0., double std=1.) {
-  this->data = std::vector<double>(dimension);
+  this->data = std::vector<double>(dimension, 0.);
 
   if(randomize) {
     this->forEach([&mean, &std](double& value) {

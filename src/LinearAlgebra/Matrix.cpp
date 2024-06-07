@@ -1,4 +1,5 @@
 #include "../../include/LinearAlgebra/Matrix.h"
+#include "../../include/LinearAlgebra/ColumnVector.h"
 #include "../../include/LinearAlgebra/Utils.h"
 
 #include <vector>
@@ -24,38 +25,44 @@ namespace LinearAlgebra{
     }
   }
 
-  Matrix::Matrix(const Matrix& other) {
-    if(this->shape() != other.shape()) {
-      throw std::invalid_argument("Matrix shape do not match for copy");
-    }
-
-    this->data = other.data;
-  }
+  Matrix::Matrix(const Matrix& other): rows(other.rows), cols(other.cols), data(other.data) {}
 
   std::pair<int, int> Matrix::shape() const {
     return std::make_pair(this->rows, this->cols);
   }
 
   double& Matrix::operator()(int row_idx, int col_idx) {
-    if(row_idx < 0 || rows <= row_idx || col_idx < 0 || cols <= col_idx) {
+    if(row_idx < 0 || this->rows <= row_idx || col_idx < 0 || this->cols <= col_idx) {
       throw std::out_of_range("index out of bounds");
     }
     return this->data[row_idx][col_idx];
   }
 
   const double& Matrix::operator()(int row_idx, int col_idx) const {
-    if(row_idx < 0 || rows <= row_idx || col_idx < 0 || cols <= col_idx) {
+    if(row_idx < 0 || this->rows <= row_idx || col_idx < 0 || this->cols <= col_idx) {
       throw std::out_of_range("index out of bounds");
     }
     return this->data[row_idx][col_idx];
   }
 
-  // RowVector& Matrix::getRow(int index) const {
-  //   if(index < 0 || rows <= index) {
-  //     throw std::out_of_range("index out of bounds");
-  //   }
-  //   return RowVector(this->data[index]);
-  // }
+  RowVector Matrix::getRow(int index) const {
+    if(index < 0 || this->rows <= index) {
+      throw std::out_of_range("index out of bounds");
+    }
+    RowVector rowVector(this->data[index]);
+    return rowVector;
+  }
+
+  ColumnVector Matrix::getColumn(int index) const {
+    if(index < 0 || this->cols <= index) {
+      throw std::out_of_range("index out of bounds");
+    }
+    ColumnVector columnVector(this->cols);
+    for(int i = 0; i < this->rows; ++i) {
+      columnVector(i) = this->data[i][index];
+    }
+    return columnVector;
+  }
 
   Matrix Matrix::operator+(const Matrix& other) const {
     if(this->shape() != other.shape()) {
@@ -96,6 +103,20 @@ namespace LinearAlgebra{
         for(int k = 0; k < this->cols; ++k) {
           result(i, j) += (*this)(i, k) * other(k, j);
         }
+      }
+    }
+    return result;
+  }
+
+  ColumnVector Matrix::operator*(const ColumnVector& vec) const {
+    if(this->cols != vec.getDimension()) {
+      throw std::invalid_argument("Matrix shape do not match for multiplication with ColumnVector");
+    }
+
+    ColumnVector result(this->rows);
+    for(int i = 0; i < this->rows; ++i){
+      for(int j = 0; j < this->cols; ++j) {
+        result(i) += (*this)(i, j) * vec(j);
       }
     }
     return result;
