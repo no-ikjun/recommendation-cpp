@@ -1,7 +1,5 @@
 #include "../../include/LinearAlgebra/Matrix.h"
 #include "../../include/LinearAlgebra/Utils.h"
-#include "../../include/LinearAlgebra/RowVector.h"
-#include "../../include/LinearAlgebra/ColumnVector.h"
 
 #include <vector>
 #include <utility>

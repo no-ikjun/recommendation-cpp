@@ -17,8 +17,8 @@ Vector::Vector(int dimension, bool randomize=false, double mean=0., double std=1
   }
 }
 
-Vector::Vector(const Vector& other) {
-  this->data = other.data;
+Vector::Vector(const std::vector<double>& other) {
+  this->data = other;
 }
 
 int Vector::getDimension() const {

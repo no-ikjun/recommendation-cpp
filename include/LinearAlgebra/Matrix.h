@@ -8,7 +8,6 @@
 #include <functional>
 
 namespace LinearAlgebra{
-
   class Matrix {
   public: 
     Matrix();

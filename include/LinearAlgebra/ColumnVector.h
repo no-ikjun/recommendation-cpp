@@ -13,6 +13,8 @@ namespace LinearAlgebra {
   class ColumnVector: public Vector {
   public:
     ColumnVector(int dimension, bool randomize=false, double mean=0., double std=1.);
+    ColumnVector(const std::vector<double>&);
+    ColumnVector(const ColumnVector&);
   
     ColumnVector operator+(const ColumnVector&) const;
     ColumnVector operator-(const ColumnVector&) const;

@@ -5,6 +5,7 @@
 #include "ColumnVector.h"
 #include "Matrix.h"
 
+#include <vector>
 namespace LinearAlgebra {
 
   class ColumnVector; // Forward declaration for resolving circular dependency
@@ -12,6 +13,8 @@ namespace LinearAlgebra {
   class RowVector: public Vector {
   public:
     RowVector(int dimension, bool randomize=false, double mean=0., double std=1.);
+    RowVector(const std::vector<double>&);
+    RowVector(const RowVector&);
 
     RowVector operator+(const RowVector&) const;
     RowVector operator-(const RowVector&) const;

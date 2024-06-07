@@ -14,6 +14,10 @@ ColumnVector::ColumnVector(
   int dimension, bool randomize, double mean, double std
 ): Vector(dimension, randomize, mean, std) {}
 
+ColumnVector::ColumnVector(const std::vector<double>& other): Vector(other) {}
+
+ColumnVector::ColumnVector(const ColumnVector& other): Vector(other.data) {}
+
 ColumnVector ColumnVector::operator+(const ColumnVector& other) const {
   ColumnVector result = *this;
   forInZip(result, other, [] (double& element1, const double& element2) {

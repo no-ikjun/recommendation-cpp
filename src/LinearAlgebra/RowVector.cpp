@@ -7,12 +7,17 @@
 #include <stdexcept>
 #include <iostream>
 #include <iomanip>
+#include <vector>
 
 using namespace LinearAlgebra;
 
 RowVector::RowVector(
   int dimension, bool randomize, double mean, double std
 ): Vector(dimension, randomize, mean, std) {}
+
+RowVector::RowVector(const std::vector<double>& other): Vector(other) {}
+
+RowVector::RowVector(const RowVector& other): Vector(other.data) {}
 
 RowVector RowVector::operator+(const RowVector& other) const {
   RowVector result = *this;

@@ -11,7 +11,7 @@ namespace LinearAlgebra {
   class Vector {
   public: 
     Vector(int dimension, bool randomize, double mean, double std);
-    Vector(const Vector&);
+    Vector(const std::vector<double>&);
 
     int getDimension() const;
 
@@ -26,7 +26,7 @@ namespace LinearAlgebra {
 
     virtual void print() = 0;
   
-  private:
+  protected:
     std::vector<double> data;
   };
 
