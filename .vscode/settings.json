@@ -87,6 +87,9 @@
     "functional": "cpp",
     "ranges": "cpp",
     "span": "cpp"
+    "__hash_table": "cpp",
+    "__node_handle": "cpp",
+    "deque": "cpp"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

@@ -1,20 +1,39 @@
 #include "db/UserDatabase.h"
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
+#include <string>
+#include <mutex>
 #include <vector>
 
-UserDatabase::UserDatabase(const std::string& filename) : filename(filename) {
-  // constructor implementation
+UserDatabase* UserDatabase::instance = nullptr;
+std::mutex UserDatabase::mutex;
+
+// 생성자
+UserDatabase::UserDatabase(const std::string& filename) : filename(filename) {}
+
+// 싱글턴 인스턴스 반환 함수
+UserDatabase* UserDatabase::getInstance(const std::string& filename) {
+  std::lock_guard<std::mutex> lock(mutex);
+  if (instance == nullptr) {
+    instance = new UserDatabase(filename);
+  }
+  return instance;
 }
 
 void UserDatabase::add(void* item) {
   User* user = static_cast<User*>(item);
-  User duplicatedUser = get(user->getId());
-  if (duplicatedUser.getId() == user->getId()) {
-    throw std::runtime_error("User with id " + user->getId() + " already exists.");
-  }
   if (user) {
-    saveToFile(*user);
+    try {
+      User duplicatedUser = get(user->getId());
+      if (duplicatedUser.getId() == user->getId()) {
+        throw std::runtime_error("User with id " + user->getId() + " already exists.");
+      }
+    } catch (const std::invalid_argument& e) {
+      saveToFile(*user);
+    }
+  } else {
+    std::cerr << "Error: Null user pointer passed to add function." << std::endl;
   }
 }
 
@@ -40,7 +59,7 @@ void UserDatabase::saveToFile(const User& user) {
 
 std::vector<User> UserDatabase::loadFromFile() {
   std::vector<User> userList;
-  std::ifstream file (filename, std::ios::binary);
+  std::ifstream file(filename, std::ios::binary);
   if (!file) {
     std::cerr << "Cannot open file " << filename << " for reading." << std::endl;
     return userList;

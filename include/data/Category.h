@@ -2,9 +2,15 @@
 #define CATEGORY_H
 
 enum class Category {
-  IT, 
   ENTERTAINMENT, 
-  SCIENCE
+  SCIENCE,
+  HEALTH,
+  POLITICS,
+  SPORTS,
+  WORLD,
+  TECH,
+  BUSINESS,
+  NONE
 };
 
 #endif

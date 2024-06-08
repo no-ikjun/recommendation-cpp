@@ -5,76 +5,81 @@
 #include "data/Category.h"
 #include "db/NewsDatabase.h"
 #include "db/UserDatabase.h"
+#include "command/GlobalCommand.h"
+#include "command/UserCommand.h"
+#include "session/UserSession.h"
 #include <vector>
+#include <fstream>
+#include <sstream>
 
-bool continuePrompt() {
-  std::string response;
-  while (true) {
-    std::cout << "Do you want to try again? (y/n): ";
-    std::getline(std::cin, response);
-    if (response == "y" || response == "Y") {
-        return true;
-    } else if (response == "n" || response == "N") {
-        return false;
-    } else {
-        std::cout << "Invalid input. Please enter 'y' or 'n'." << std::endl;
-    }
-  }
+// 카테고리 문자열을 Category 열거형으로 변환하는 함수
+Category parseCategory(const std::string& categoryStr) {
+  if (categoryStr == "Entertainment") return Category::ENTERTAINMENT;
+  else if (categoryStr == "science") return Category::SCIENCE;
+  else if (categoryStr == "Health") return Category::HEALTH;
+  else if (categoryStr == "Politics") return Category::POLITICS;
+  else if (categoryStr == "Sports") return Category::SPORTS;
+  else if (categoryStr == "World") return Category::WORLD;
+  else if (categoryStr == "Tech") return Category::TECH;
+  else if (categoryStr == "Business") return Category::BUSINESS;
+  else return Category::NONE;
 }
 
-void signUp(UserDatabase& userDb) {
-  while (true) {
-    try {
-      std::string id, name, password;
-      std::cout << "Sign Up" << std::endl;
+void loadNewsFromCSV(const std::string& filename, NewsDatabase* newsDb) {
+  std::ifstream file(filename);
+  std::string line;
+  
+  std::getline(file, line);
 
-      std::cout << "id: ";
-      std::getline(std::cin, id);
-      std::cout << "name: ";
-      std::getline(std::cin, name);
-      std::cout << "password: ";
-      std::getline(std::cin, password);
+  std::cout << "Start loading news from " << filename << "\n";
 
-      User user(id, name, password);
-      userDb.add(&user);
-      break;  // 성공적으로 추가되면 반복 종료
-    } catch (const std::runtime_error& e) {
-      std::cout << "Error: " << e.what() << std::endl;
-      if (!continuePrompt()) {
-          break;  // 사용자가 'n' 입력시 종료
-      }
-    }
+  int id = 1;
+  while (std::getline(file, line)) {
+    if (id  > 300) break;
+    std::istringstream ss(line);
+    std::string text, categoryStr, dummy;
+    
+    std::getline(ss, dummy, '"');
+    std::getline(ss, text, '"');
+    std::getline(ss, dummy, ',');
+    std::getline(ss, categoryStr, ',');
+
+    Category category = parseCategory(categoryStr);
+    News* news = new News(std::to_string(id), "Generated Title", text, category);
+    newsDb->add(news);
+    id++;
   }
+  
+  file.close();
 }
+
 
 int main() {
   //userDB 객체 생성
   std::string userFilename = "user_database.bin";
-  UserDatabase userDb(userFilename);
+  UserDatabase* userDb = UserDatabase::getInstance(userFilename);
   //newsDB 객체 생성
   std::string newsFilename = "news_database.bin";
-  NewsDatabase db(newsFilename);
+  NewsDatabase* newsDb = NewsDatabase::getInstance(newsFilename);
+  //user session 객체 생성
+  UserSession* session = UserSession::getInstance();
 
-  //회원가입
-  signUp(userDb);
-
-  //회원 정보 다 빼내기
-  std::vector<User> userList = userDb.loadFromFile();
-  for (const auto& user : userList) {
-    std::cout << "Retrieved User: " << user.getId() << " - " << user.getName() << std::endl;
+  GlobalCommand globalCommand(userDb, newsDb);
+  globalCommand.printWelcome();
+  
+  while (!session->isAuthenticated()) {
+    globalCommand.showMenu();
+    if (session->isAuthenticated()) {
+      std::cout << "Welcome, " << session->getUserName() << "!\n";
+      break;
+    }
   }
- 
 
-  // News news1("1", "AI Advances", "New AI algorithms have been developed.", Category::IT);
-  // News news2("2", "Space Exploration", "Mars mission plans unveiled.", Category::SCIENCE);
+  //loadNewsFromCSV("news_article_categorization.csv", newsDb);
 
-  // db.add(&news1);
-  // db.add(&news2);
-
-  // std::vector<News> newsList = db.loadFromFile();
+  // std::vector<News> newsList = newsDb->loadFromFile();
   // for (const auto& news : newsList) {
-  //   std::cout << "Retrieved News: " << news.getTitle() << " - " << news.getContent() << std::endl;
+  //   std::cout << "Retrieved News: " << news.getId() << " - " << news.getContent() << std::endl;
   // }
-
   return 0;
 }

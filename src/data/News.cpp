@@ -1,7 +1,7 @@
 #include "data/News.h"
 #include <iostream>
 
-News::News() : id(""), title(""), content(""), category(Category::IT) {}
+News::News() : id(""), title(""), content(""), category(Category::NONE) {}
 
 News::News(const std::string& id, const std::string& title,
            const std::string& content, Category category)
