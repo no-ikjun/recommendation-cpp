@@ -1,27 +1,49 @@
 #ifndef WORD2VEC_H
 #define WORD2VEC_H
 
-#include "Vocabulary.h"
+#include "Model.h"
+#include "../recommender/Vocabulary.h"
+#include "../LinearAlgebra/Matrix.h"
+#include "../LinearAlgebra/ColumnVector.h"
 
 #include <vector>
 #include <utility> // pair
+#include <unordered_map>
+#include <filesystem>
+#include <string>
 
-class Word2Vec {
+class Word2Vec : public Model {
 public:
-  Word2Vec(int dimension, Vocabulary& vocabulary);
-  // std::vector<double> embed(std::string) override;
-  void generateCBOW(std::filesystem::path, int contextLength); // Continuous Bag of words
-  std::vector<std::pair<int, int>> getCBOW();
-  void loadTrainDataset(std::string filepath);
-  void saveTrainDataset(std::string filepath);
-  void train(int epoch, double alpha);
+  Word2Vec(int dimension, int contextLength, Vocabulary& vocabulary);
+  
+  LinearAlgebra::ColumnVector embed(std::string) override;
+
+  // CBOW: Continuous Bag of Words
+  std::vector<std::pair<int, std::vector<int>>> getCBOW();
+  void generateCBOW(std::filesystem::path, int contextLength);
+  void saveCBOW(const std::string& filePath);
+  void loadCBOW(const std::string& filePath);
+
+  void saveWeights(const std::string& filePath);
+  void loadWeights(const std::string& filePath);
+
+  LinearAlgebra::ColumnVector forward(std::vector<int> contextTokens);
+  void backward(
+    std::vector<int>& contextTokens,
+    LinearAlgebra::ColumnVector& prediction, 
+    int& centerToken, 
+    double learningRate
+  );
+  
+  void train(int epoch, double learningRate);
 
 private:
   Vocabulary vocabulary;
-  std::vector<std::pair<int, int>> CBOW;
+  int contextLength;
+  std::vector<std::pair<int, std::vector<int>>> CBOW;
   int dimension;
-  std::vector<std::vector<double>> encoderWeights;
-  std::vector<std::vector<double>> decoderWeights;
+  LinearAlgebra::Matrix encoderWeights;
+  LinearAlgebra::Matrix decoderWeights;
 };
 
-#endif
+#endif  

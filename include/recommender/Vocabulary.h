@@ -9,13 +9,14 @@
 
 class Vocabulary {
 public:
-  Vocabulary(int maxVocabSize);
+  Vocabulary();
   std::unordered_map<std::string, int> getVocab();
+  int getVocabSize();
   int getId(std::string);
-  void createVocabulary(std::filesystem::path);
-  std::vector<bool> one_hot_encode();
+  void create(std::filesystem::path, int maxVocabSize);
+  void saveAs(std::filesystem::path);
+  void loadFrom(std::filesystem::path);
 private:
-  int maxVocabSize;
   std::unordered_map<std::string, int> vocab;
 };
 
