@@ -1,9 +1,11 @@
 #include "../../include/LinearAlgebra/Utils.h"
 #include "../../include/LinearAlgebra/Vector.h"
+#include "../../include/LinearAlgebra/ColumnVector.h"
 
 #include <random>
 #include <stdexcept>
 #include <functional>
+#include <cmath>
 
 namespace LinearAlgebra {
   double randn(double mean, double std) {
@@ -53,5 +55,20 @@ namespace LinearAlgebra {
     }
   }
 
+  ColumnVector oneHotEncode(int index, int dimension) {
+    ColumnVector oneHotVector(dimension);
+    oneHotVector(index) = 1;
+    return oneHotVector;
+  }
 
+  void softmax(Vector& vector) {
+    double exp_sum = 0;
+    vector.forEach([&exp_sum](double& value) {
+      value = std::exp(value);
+      exp_sum += value;
+    });
+    vector.forEach([&exp_sum](double& value) {
+      value /= exp_sum;
+    });
+  }
 }

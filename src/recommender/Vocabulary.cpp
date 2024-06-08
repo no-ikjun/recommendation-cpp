@@ -10,13 +10,16 @@
 #include <exception>
 #include <utility> // pair 
 #include <algorithm>
+#include <ios>
 
-Vocabulary::Vocabulary(int maxVocabSize) {
-  this->maxVocabSize = maxVocabSize;
-}
+Vocabulary::Vocabulary() {}
 
 std::unordered_map<std::string, int> Vocabulary::getVocab() {
   return this->vocab;
+}
+
+int Vocabulary::getVocabSize() {
+  return this->vocab.size();
 }
 
 int Vocabulary::getId(std::string token) {
@@ -27,8 +30,8 @@ int Vocabulary::getId(std::string token) {
   }
 }
 
-void Vocabulary::createVocabulary(std::filesystem::path datasetPath) {
-  std::cout << "@Vocabulary" << std::endl;
+void Vocabulary::create(std::filesystem::path datasetPath, int maxVocabSize) {
+  std::cout << "\n@Vocabulary" << std::endl;
 
   std::cout
     << "  Currently at " << std::filesystem::current_path()
@@ -79,10 +82,10 @@ void Vocabulary::createVocabulary(std::filesystem::path datasetPath) {
     }
   }
   
-  if(histogram.size() > this->maxVocabSize) {
+  if(histogram.size() > maxVocabSize) {
     std::cout 
-      << "  Removing " << histogram.size() - this->maxVocabSize 
-      << " tokens from the vocabulary to match the maximum vocabulary size " << this->maxVocabSize
+      << "  Removing " << histogram.size() - maxVocabSize 
+      << " tokens from the vocabulary to match the maximum vocabulary size " << maxVocabSize
     << std::endl;
 
     std::vector<std::pair<std::string, int>> vectorized_histogram(histogram.begin(), histogram.end());
@@ -94,10 +97,10 @@ void Vocabulary::createVocabulary(std::filesystem::path datasetPath) {
         std::pair<std::string, int> b
       ) -> bool {return a.second > b.second;}
     );
-    for(auto it = vectorized_histogram.begin(); it != vectorized_histogram.end() - (histogram.size() - this->maxVocabSize); ++it) {
+    for(auto it = vectorized_histogram.begin(); it != vectorized_histogram.end() - (histogram.size() - maxVocabSize); ++it) {
       it->second = it - vectorized_histogram.begin();
     }
-    this->vocab = std::unordered_map<std::string, int>(vectorized_histogram.begin(), vectorized_histogram.end() - (histogram.size() - this->maxVocabSize + 1));
+    this->vocab = std::unordered_map<std::string, int>(vectorized_histogram.begin(), vectorized_histogram.end() - (histogram.size() - maxVocabSize + 1));
     this->vocab["<unk>"] = this->vocab.size();
   }
 
@@ -107,6 +110,47 @@ void Vocabulary::createVocabulary(std::filesystem::path datasetPath) {
 
 }
 
-int Vocabulary::getVocabSize() {
-  return this->vocab.size();
+void Vocabulary::saveAs(std::filesystem::path filePath) {
+  std::cout << "\n@Vocabulary" << std::endl;
+
+  std::ofstream file(filePath, std::ios::binary);
+  if (file.is_open()) {
+    std::cout << "  Saving vocabulary to " << filePath << "..." << std::endl;
+    size_t vocabSize = this->vocab.size();
+    file.write(reinterpret_cast<const char*>(&vocabSize), sizeof(vocabSize));
+    for (const auto& entry : this->vocab) {
+      size_t tokenSize = entry.first.size();
+      file.write(reinterpret_cast<const char*>(&tokenSize), sizeof(tokenSize));
+      file.write(entry.first.c_str(), tokenSize);
+      file.write(reinterpret_cast<const char*>(&entry.second), sizeof(entry.second));
+    }
+    std::cout << "  Vocabulary saved successfully" << std::endl;
+    file.close();
+  } else {
+    throw std::runtime_error("Cannot open file: " + filePath.string());
+  }
+}
+
+void Vocabulary::loadFrom(std::filesystem::path filePath) {
+  std::cout << "\n@Vocabulary" << std::endl;
+
+  std::ifstream file(filePath, std::ios::binary);
+  if (file.is_open()) {
+    std::cout << "  Loading vocabulary from " << filePath << "..." << std::endl;
+    size_t vocabSize;
+    file.read(reinterpret_cast<char*>(&vocabSize), sizeof(vocabSize));
+    for (size_t i = 0; i < vocabSize; ++i) {
+      size_t tokenSize;
+      file.read(reinterpret_cast<char*>(&tokenSize), sizeof(tokenSize));
+      std::string token(tokenSize, '\0');
+      file.read(&token[0], tokenSize);
+      int id;
+      file.read(reinterpret_cast<char*>(&id), sizeof(id));
+      this->vocab[token] = id;
+    }
+    std::cout << "  Vocabulary loaded successfully" << std::endl;
+    file.close();
+  } else {
+    throw std::runtime_error("Cannot open file: " + filePath.string());
+  }
 }

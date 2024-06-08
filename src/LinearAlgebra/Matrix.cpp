@@ -7,6 +7,10 @@
 #include <stdexcept>
 #include <iostream>
 #include <iomanip>
+#include <system_error>
+#include <fstream>
+#include <string>
+
 
 namespace LinearAlgebra{
 
@@ -57,7 +61,7 @@ namespace LinearAlgebra{
     if(index < 0 || this->cols <= index) {
       throw std::out_of_range("index out of bounds");
     }
-    ColumnVector columnVector(this->cols);
+    ColumnVector columnVector(this->rows);
     for(int i = 0; i < this->rows; ++i) {
       columnVector(i) = this->data[i][index];
     }
@@ -122,6 +126,30 @@ namespace LinearAlgebra{
     return result;
   }
 
+  Matrix Matrix::operator*(const double& scalar) const {
+    Matrix result(this->rows, this->cols);
+    for(int i = 0; i < this->rows; ++i){
+      for(int j = 0; j < this->cols; ++j) {
+        result(i, j) = (*this)(i, j) * scalar;
+      }
+    }
+    return result;
+  }
+
+  Matrix Matrix::operator/(const double& scalar) const {
+    if(scalar == 0) {
+      throw std::invalid_argument("Division by zero");
+    }
+
+    Matrix result(this->rows, this->cols);
+    for(int i = 0; i < this->rows; ++i){
+      for(int j = 0; j < this->cols; ++j) {
+        result(i, j) = (*this)(i, j) / scalar;
+      }
+    }
+    return result;
+  }
+
   Matrix& Matrix::operator+=(const Matrix& other) {
     if(this->shape() != other.shape()) {
       throw std::invalid_argument("Matrix shape do not match for addition");
@@ -164,6 +192,20 @@ namespace LinearAlgebra{
     return *this = result;
   }
 
+  Matrix& Matrix::operator*=(const double& scalar) {
+    this->forEach([scalar](double& element) {element *= scalar;});
+    return *this;
+  }
+
+  Matrix& Matrix::operator/=(const double& scalar) {
+    if(scalar == 0) {
+      throw std::invalid_argument("Division by zero");
+    }
+
+    this->forEach([scalar](double& element) {element /= scalar;});
+    return *this;
+  }
+
   Matrix Matrix::transpose() const {
     Matrix result(this->cols, this->rows);
     for(int i = 0; i < this->rows; ++i) {
@@ -182,25 +224,64 @@ namespace LinearAlgebra{
     }
   }
 
-  void Matrix::print() {
+  void Matrix::print(bool compact) const {
     std::cout << std::noshowpos
       << "Matrix of shape (" << this->rows << ", " << this->cols << ")"
     << std::endl;
 
-    std::cout << "[";
-    for(int i = 0; i < this->rows; ++i) {
-      std::cout << (i == 0 ? "" : " ") << "[";
-      for(int j = 0; j < this->cols; ++j) {
-        std::cout << std::setw(2) << std::fixed << std::setprecision(2) << std::showpos 
-          << (*this)(i, j)
-          << (
-            j == this->cols-1 
-            ? (i == this->rows-1 ? "]" : "],") 
-            : ", "
-            );
+    if(!compact) {
+      std::cout << "[";
+      for(int i = 0; i < this->rows; ++i) {
+        std::cout << (i == 0 ? "" : " ") << "[";
+        for(int j = 0; j < this->cols; ++j) {
+          std::cout << std::setw(2) << std::fixed << std::setprecision(2) << std::showpos 
+            << (*this)(i, j)
+            << (
+              j == this->cols-1 
+              ? (i == this->rows-1 ? "]" : "],") 
+              : ", "
+              );
+        }
+        std::cout << (i == this->rows-1 ? "]" : "") << std::endl;
       }
-      std::cout << (i == this->rows-1 ? "]" : "") << std::endl;
     }
+  }
+
+  void Matrix::saveAs(const std::string& filename) const {
+    std::ofstream file(filename, std::ios::binary);
+    if (!file.is_open()) {
+      throw std::runtime_error("Failed to open file for writing");
+    }
+
+    file.write(reinterpret_cast<const char*>(&this->rows), sizeof(int));
+    file.write(reinterpret_cast<const char*>(&this->cols), sizeof(int));
+
+    for (const std::vector<double>& row : this->data) {
+      file.write(reinterpret_cast<const char*>(row.data()), sizeof(double) * this->cols);
+    }
+
+    file.close();
+  }
+
+  void Matrix::loadFrom(const std::string& filename) {
+    std::ifstream file(filename, std::ios::binary);
+    if (!file.is_open()) {
+      throw std::runtime_error("Failed to open file for reading");
+    }
+
+    int rows, cols;
+    file.read(reinterpret_cast<char*>(&rows), sizeof(int));
+    file.read(reinterpret_cast<char*>(&cols), sizeof(int));
+
+    this->rows = rows;
+    this->cols = cols;
+    this->data.resize(rows, std::vector<double>(cols));
+
+    for (std::vector<double>& row : this->data) {
+      file.read(reinterpret_cast<char*>(row.data()), sizeof(double) * cols);
+    }
+
+    file.close();
   }
 
 }

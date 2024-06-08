@@ -19,14 +19,18 @@ namespace LinearAlgebra {
     ColumnVector operator+(const ColumnVector&) const;
     ColumnVector operator-(const ColumnVector&) const;
     Matrix operator*(const RowVector&) const;
+    ColumnVector operator*(const double&) const;
+    ColumnVector operator/(const double&) const;
     ColumnVector& operator+=(const ColumnVector&);
     ColumnVector& operator-=(const ColumnVector&);
+    ColumnVector& operator*=(const double&);
+    ColumnVector& operator/=(const double&);
     double dot(const ColumnVector&) const;
     double euclideanDistance(const ColumnVector&) const;
     double cosineSimilarity(const ColumnVector&) const;
     RowVector transpose() const;
 
-    void print() override;
+    void print(bool compact=false) const override;
   };
   
 }

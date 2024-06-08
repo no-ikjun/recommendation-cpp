@@ -4,7 +4,7 @@
 
 int main() {
   Vocabulary vocab(10000);
-  vocab.createVocabulary("./dataset/dataset_sm");
+  vocab.create("./dataset/dataset_sm");
   std::cout << "\n100 tokens among " << vocab.getVocab().size() << std::endl;
   int i = 0;
   for(auto [token, id]: vocab.getVocab()) {

@@ -24,7 +24,7 @@ namespace LinearAlgebra {
     void forEach(const std::function<void(double&)>& func);
     void forEach(const std::function<void(const double&)>& func);
 
-    virtual void print() = 0;
+    virtual void print(bool compact=false) const = 0;
   
   protected:
     std::vector<double> data;

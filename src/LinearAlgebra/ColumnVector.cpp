@@ -44,6 +44,22 @@ Matrix ColumnVector::operator*(const RowVector& other) const {
   return result;
 }
 
+ColumnVector ColumnVector::operator*(const double& scalar) const {
+  ColumnVector result = *this;
+  result.forEach([scalar] (double& element) {
+    element *= scalar;
+  });
+  return result;
+}
+
+ColumnVector ColumnVector::operator/(const double& scalar) const {
+  ColumnVector result = *this;
+  result.forEach([scalar] (double& element) {
+    element /= scalar;
+  });
+  return result;
+}
+
 ColumnVector& ColumnVector::operator+=(const ColumnVector& other) {
   forInZip(*this, other, [] (double& element1, const double& element2) {
     element1 += element2;
@@ -54,6 +70,20 @@ ColumnVector& ColumnVector::operator+=(const ColumnVector& other) {
 ColumnVector& ColumnVector::operator-=(const ColumnVector& other) {
   forInZip(*this, other, [] (double& element1, const double& element2) {
     element1 -= element2;
+  });
+  return *this;
+}
+
+ColumnVector& ColumnVector::operator*=(const double& scalar) {
+  this->forEach([scalar] (double& element) {
+    element *= scalar;
+  });
+  return *this;
+}
+
+ColumnVector& ColumnVector::operator/=(const double& scalar) {
+  this->forEach([scalar] (double& element) {
+    element /= scalar;
   });
   return *this;
 }
@@ -88,18 +118,20 @@ RowVector ColumnVector::transpose() const {
   return result;
 }
 
-void ColumnVector::print() {
+void ColumnVector::print(bool compact) const {
   std::cout << std::noshowpos
     << "Column vector of dimension " << this->getDimension()
   << std::endl;
 
-  std::cout << "[";
-  for(int i = 0; i < this->getDimension(); ++i) {
-    std::cout
-      << (i == 0 ? "": " ")
-      << std::setw(2) << std::fixed << std::setprecision(2) << std::showpos 
-      << (*this)(i)
-      << (i == this->getDimension() - 1 ? "]": ", ")
-    << std::endl;
+  if(!compact) {
+    std::cout << "[";
+    for(int i = 0; i < this->getDimension(); ++i) {
+      std::cout
+        << (i == 0 ? "": " ")
+        << std::setw(2) << std::fixed << std::setprecision(2) << std::showpos 
+        << (*this)(i)
+        << (i == this->getDimension() - 1 ? "]": ", ")
+      << std::endl;
+    }
   }
 }

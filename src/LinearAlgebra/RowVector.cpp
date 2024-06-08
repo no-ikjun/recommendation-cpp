@@ -35,7 +35,7 @@ RowVector RowVector::operator-(const RowVector& other) const {
 }
 
 double RowVector::operator*(const ColumnVector& other) const {
-  double result = other.dot(this->transpose());
+  double result = this->dot(other.transpose());
   return result;
 }
 
@@ -47,6 +47,22 @@ RowVector RowVector::operator*(const Matrix& other) const {
   for(int i = 0; i < other.shape().second; ++i) {
     result(i) = (*this) * other.getColumn(i);
   }
+  return result;
+}
+
+RowVector RowVector::operator*(const double& scalar) const {
+  RowVector result = *this;
+  result.forEach([scalar] (double& element) {
+    element *= scalar;
+  });
+  return result;
+}
+
+RowVector RowVector::operator/(const double& scalar) const {
+  RowVector result = *this;
+  result.forEach([scalar] (double& element) {
+    element /= scalar;
+  });
   return result;
 }
 
@@ -71,6 +87,20 @@ RowVector& RowVector::operator*=(const Matrix& other) {
   for(int i = 0; i < other.shape().second; ++i) {
     (*this)(i) = (*this) * other.getColumn(i);
   }
+  return *this;
+}
+
+RowVector& RowVector::operator*=(const double& scalar) {
+  this->forEach([scalar] (double& element) {
+    element *= scalar;
+  });
+  return *this;
+}
+
+RowVector& RowVector::operator/=(const double& scalar) {
+  this->forEach([scalar] (double& element) {
+    element /= scalar;
+  });
   return *this;
 }
 
@@ -104,16 +134,18 @@ ColumnVector RowVector::transpose() const {
   return result;
 }
 
-void RowVector::print() {
+void RowVector::print(bool compact) const {
   std::cout << std::noshowpos
     << "Row vector of dimension " << this->getDimension()
   << std::endl;
 
-  std::cout << "[";
-  for(int i = 0; i < this->getDimension(); ++i) {
-    std::cout << std::setw(2) << std::fixed << std::setprecision(2) << std::showpos 
-      << (*this)(i)
-      << (i == this->getDimension() - 1 ? "]": ", ");
+  if(!compact) {
+    std::cout << "[";
+    for(int i = 0; i < this->getDimension(); ++i) {
+      std::cout << std::setw(2) << std::fixed << std::setprecision(2) << std::showpos 
+        << (*this)(i)
+        << (i == this->getDimension() - 1 ? "]": ", ");
+    }
+    std::cout << std::endl;
   }
-  std::cout << std::endl;
 }

@@ -6,6 +6,7 @@
 #include <vector>
 #include <utility>
 #include <functional>
+#include <string>
 
 namespace LinearAlgebra{
 
@@ -30,13 +31,19 @@ namespace LinearAlgebra{
     Matrix operator-(const Matrix&) const;
     Matrix operator*(const Matrix&) const;
     ColumnVector operator*(const ColumnVector&) const;
+    Matrix operator*(const double&) const;
+    Matrix operator/(const double&) const;
     Matrix& operator+=(const Matrix&);
     Matrix& operator-=(const Matrix&);
     Matrix& operator*=(const Matrix&);
+    Matrix& operator*=(const double&);
+    Matrix& operator/=(const double&);
 
     Matrix transpose() const;
     void forEach(const std::function<void(double&)>& func);
-    void print();
+    void print(bool compact=false) const;
+    void saveAs(const std::string& filename) const;
+    void loadFrom(const std::string& filename);
     
   private:
     int rows;
