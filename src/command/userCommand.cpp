@@ -1,6 +1,7 @@
 #include "command/UserCommand.h"
 #include "session/UserSession.h"
 #include <iostream>
+#include <sstream>
 
 const std::string RED = "\033[31m";
 const std::string GREEN = "\033[32m";
@@ -23,7 +24,7 @@ void UserCommand::signUp() {
     std::getline(std::cin, password);
 
     try {
-      User newUser(id, name, password);
+      User newUser(id, name, password, {});
       userDb->add(&newUser);
       std::cout << GREEN << "Registration successful." << RESET << std::endl;
       registrationSuccessful = true;
