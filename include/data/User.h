@@ -16,6 +16,7 @@ public:
   std::string getName() const;
   std::string getPassword() const;
   std::vector<double> getPreference() const;
+  void setPreference(const std::vector<double>& preference);
 
   void serialize(std::ostream& os) const;
   bool deserialize(std::istream& is);

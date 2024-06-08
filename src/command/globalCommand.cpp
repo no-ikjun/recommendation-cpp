@@ -1,5 +1,6 @@
 #include "command/GlobalCommand.h"
 #include "command/UserCommand.h"
+#include "session/UserSession.h"
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -57,6 +58,45 @@ void GlobalCommand::showMenu() {
       break;
     case 3:
       std::cout << "Exiting the program. Good Bye." << std::endl;
+      break;
+    default:
+      std::cout << "Unknown error occurred." << std::endl;
+  }
+}
+
+void GlobalCommand::showUserMenu() {
+  int choice = 0;
+  UserSession* session = UserSession::getInstance();
+  std::cout << YELLOW << "\n===== Welcome, " << session->getUserName() << " =====\n" << RESET;
+  std::cout << GREEN << "1. Set Preference - Update your news preference" << RESET << std::endl;
+  std::cout << GREEN << "2. Get Recommendation - Get news recommendation based on your preference" << RESET << std::endl;
+  std::cout << RED << "3. Sign Out - Log out from your account" << RESET << std::endl;
+  std::cout << CYAN << "Enter your choice (1-3): " << RESET;
+
+  while (!(std::cin >> choice) || choice < 1 || choice > 3) {
+    std::cout << RED << "Invalid input. Please enter a number between 1 and 3: " << RESET;
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+  }
+
+  UserCommand userCommand(userDb);
+
+  #if defined(_WIN32) || defined(_WIN64)
+  system("cls"); // Windows
+  #else
+  system("clear"); // UNIX/Linux/macOS
+  #endif
+
+  switch (choice) {
+    case 1:
+      userCommand.setPref();
+      break;
+    case 2:
+      //userCommand.getRecommendation();
+      break;
+    case 3:
+      session->logout();
+      std::cout << "You have been successfully logged out." << std::endl;
       break;
     default:
       std::cout << "Unknown error occurred." << std::endl;

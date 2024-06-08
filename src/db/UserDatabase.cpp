@@ -71,3 +71,31 @@ std::vector<User> UserDatabase::loadFromFile() {
   file.close();
   return userList;
 }
+
+void UserDatabase::update(std::string id, void* item) {
+  User* newUser = static_cast<User*>(item);
+  if (newUser) {
+    std::vector<User> userList = loadFromFile();
+    bool updated = false;
+    for (auto& user : userList) {
+      if (user.getId() == id) {
+        user = *newUser;
+        updated = true;
+        break;
+      }
+    }
+    if (updated) {
+      std::ofstream file(filename, std::ios::binary);
+      if (file) {
+        for (const auto& user : userList) {
+          user.serialize(file);
+        }
+      } else {
+        std::cerr << "Cannot open file " << filename << " for writing." << std::endl;
+      }
+      file.close();
+    }
+  } else {
+    std::cerr << "Error: Null user pointer passed to update function." << std::endl;
+  }
+}
