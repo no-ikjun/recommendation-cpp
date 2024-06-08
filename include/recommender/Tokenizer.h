@@ -3,8 +3,8 @@
 
 #include <sstream>
 #include <string>
-#include <string>
 #include <regex>
+#include <vector>
 
 inline std::vector<std::string> tokenize (
   std::string& string, 

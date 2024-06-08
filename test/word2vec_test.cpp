@@ -8,6 +8,8 @@
 #include <utility>
 #include <iomanip>
 
+#include <unordered_map>
+
 
 int main() {
   Vocabulary vocabulary;
@@ -17,7 +19,7 @@ int main() {
   } catch (const std::exception& e) {
     std::cout << "Cannot find saved vocabulary" << std::endl;
     std::cout << "Generating vocabulary..." << std::endl;
-    vocabulary.create("./dataset/dataset_sm", 10000);
+    vocabulary.create("./dataset/dataset_sm", 1000);
     vocabulary.saveAs("./src/recommender/vocabulary.bin");
   }
 
@@ -37,36 +39,36 @@ int main() {
       word2vec.saveCBOW("./src/recommender/cbow.bin");
     }
 
-    word2vec.train(1, 0.02);
+    word2vec.train(1, 0.01);
 
     word2vec.saveWeights("./src/recommender/weights.bin");
   }
   
-  std::cout << "\nking " << std::endl;
-  LinearAlgebra::ColumnVector king = word2vec.embed("king");
-  king.print();
+  // std::cout << "\nking " << std::endl;
+  // LinearAlgebra::ColumnVector king = word2vec.embed("king");
+  // king.print();
 
-  std::cout << "\nqueen" << std::endl;
-  LinearAlgebra::ColumnVector queen = word2vec.embed("queen");
-  queen.print();
+  // std::cout << "\nqueen" << std::endl;
+  // LinearAlgebra::ColumnVector queen = word2vec.embed("queen");
+  // queen.print();
 
-  std::cout << "\nman" << std::endl;
-  LinearAlgebra::ColumnVector man = word2vec.embed("man");
-  man.print();
+  // std::cout << "\nman" << std::endl;
+  // LinearAlgebra::ColumnVector man = word2vec.embed("man");
+  // man.print();
   
-  std::cout << "\nwoman" << std::endl;
-  LinearAlgebra::ColumnVector woman = word2vec.embed("woman");
-  woman.print();
+  // std::cout << "\nwoman" << std::endl;
+  // LinearAlgebra::ColumnVector woman = word2vec.embed("woman");
+  // woman.print();
 
-  std::cout << "\nking - man + woman" << std::endl;
-  LinearAlgebra::ColumnVector mystery = word2vec.embed("woman");
+  // std::cout << "\nking - man + woman" << std::endl;
+  // LinearAlgebra::ColumnVector mystery = word2vec.embed("woman");
 
-  std::cout << "\n(king - man + woman) ~ queen similarity: " 
-    << mystery.cosineSimilarity(queen)
-  << std::endl;
+  // std::cout << "\n(king - man + woman) ~ queen similarity: " 
+  //   << mystery.cosineSimilarity(queen)
+  // << std::endl;
 
-  std::cout << "\n(king - man + woman) ~ apple similarity: " 
-    << mystery.cosineSimilarity(word2vec.embed("apple"))
-  << std::endl;
+  // std::cout << "\n(king - man + woman) ~ apple similarity: " 
+  //   << mystery.cosineSimilarity(word2vec.embed("apple"))
+  // << std::endl;
   
 }

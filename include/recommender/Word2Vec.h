@@ -1,6 +1,7 @@
 #ifndef WORD2VEC_H
 #define WORD2VEC_H
 
+#include "Model.h"
 #include "../recommender/Vocabulary.h"
 #include "../LinearAlgebra/Matrix.h"
 #include "../LinearAlgebra/ColumnVector.h"
@@ -11,11 +12,11 @@
 #include <filesystem>
 #include <string>
 
-class Word2Vec {
+class Word2Vec : public Model {
 public:
   Word2Vec(int dimension, int contextLength, Vocabulary& vocabulary);
   
-  LinearAlgebra::ColumnVector embed(std::string);
+  LinearAlgebra::ColumnVector embed(std::string) override;
 
   // CBOW: Continuous Bag of Words
   std::vector<std::pair<int, std::vector<int>>> getCBOW();
