@@ -62,11 +62,3 @@ void UserCommand::setPref() {
 void UserCommand::printError(const std::string& message) {
   std::cerr << "Error: " << message << std::endl;
 }
-
-void UserCommand::printWelcome() {
-  std::cout << "Welcome to the system!" << std::endl;
-}
-
-void UserCommand::printGoodbye() {
-  std::cout << "Goodbye!" << std::endl;
-}

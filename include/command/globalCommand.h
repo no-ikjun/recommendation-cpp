@@ -15,6 +15,9 @@ public:
   explicit GlobalCommand(UserDatabase* userDb, NewsDatabase* newsDb) : userDb(userDb), newsDb(newsDb) {}
   static bool continuePrompt();
   void showMenu();
+  void printWelcome();
+  void printGoodbye();
+  void printError(const std::string& message);
 };
 
 #endif // GLOBALCOMMAND_H

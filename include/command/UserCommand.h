@@ -14,8 +14,6 @@ public:
   void signIn();
   void setPref();
   void printError(const std::string& message);
-  void printWelcome();
-  void printGoodbye();
 };
 
 #endif // USERCOMMAND_H
