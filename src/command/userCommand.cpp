@@ -110,7 +110,7 @@ void UserCommand::setPref() {
   try {
     UserSession* session = UserSession::getInstance();
     User updatedUserData = userDb->get(session->getUserId());
-    #TODO: Wod2Vec 연결해서 관심사를 벡터로 변환
+    //TODO: Wod2Vec 연결해서 관심사를 벡터로 변환
     std::vector<double> prefData = {0.1, 1.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8};
     updatedUserData.setPreference(prefData);
     userDb->update(session->getUserId(), &updatedUserData);
