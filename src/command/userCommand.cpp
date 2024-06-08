@@ -74,28 +74,28 @@ void UserCommand::signIn() {
   } while (!loginSuccessful);
 }
 
-void UserCommand::setPref() {
-  std::cout << "Setting preferences...\n";
-  std::cout << "Enter your interests separated by spaces (e.g., technology science business): ";
+// void UserCommand::setPref() {
+//   std::cout << "Setting preferences...\n";
+//   std::cout << "Enter your interests separated by spaces (e.g., technology science business): ";
 
-  std::string input;
-  std::getline(std::cin, input);  // 전체 라인 입력 받기
+//   std::string input;
+//   std::getline(std::cin, input);  // 전체 라인 입력 받기
 
-  std::istringstream iss(input);
-  std::vector<std::string> interests;
-  std::string interest;
+//   std::istringstream iss(input);
+//   std::vector<std::string> interests;
+//   std::string interest;
 
-  // 공백을 기준으로 입력 받은 라인을 나누기
-  while (iss >> interest) {
-      interests.push_back(interest);
-  }
+//   // 공백을 기준으로 입력 받은 라인을 나누기
+//   while (iss >> interest) {
+//       interests.push_back(interest);
+//   }
 
-  // 저장된 관심사 출력
-  std::cout << "You have entered the following interests:\n";
-  for (const auto& item : interests) {
-      std::cout << "- " << item << std::endl;
-  }
-}
+//   // 저장된 관심사 출력
+//   std::cout << "You have entered the following interests:\n";
+//   for (const auto& item : interests) {
+//       std::cout << "- " << item << std::endl;
+//   }
+// }
 
 void UserCommand::printError(const std::string& message) {
   std::cout << RED << "User Command Error: " << message << RESET << std::endl;

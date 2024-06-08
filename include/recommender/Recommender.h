@@ -5,7 +5,6 @@
 #include "NewsDatabase.h"
 #include "Data.h"
 #include "Model.h"
-#include ""
 
 #include <memory>
 #include <string>
@@ -14,7 +13,7 @@
 class Recommender{
 public:
   Recommender(Model&);
-  std::string getRecommendations(User&, NewsDatabase&);
+  std::string getRecommendation(User&, NewsDatabase&);
 
 private:
   Model model;
