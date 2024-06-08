@@ -29,22 +29,23 @@ void loadNewsFromCSV(const std::string& filename, NewsDatabase* newsDb) {
   std::ifstream file(filename);
   std::string line;
   
-  // 첫 줄은 헤더라고 가정하고 건너뜁니다.
   std::getline(file, line);
-  
-  std::cout << "start loading news from " << filename << "\n";
+
+  std::cout << "Start loading news from " << filename << "\n";
 
   int id = 1;
-  
   while (std::getline(file, line)) {
-    std::stringstream ss(line);
-    std::string text, categoryStr;
-  
-    std::getline(ss, text, ',');
-    std::getline(ss, categoryStr, ',');
+    if (id  > 300) break;
+    std::istringstream ss(line);
+    std::string text, categoryStr, dummy;
     
+    std::getline(ss, dummy, '"');
+    std::getline(ss, text, '"');
+    std::getline(ss, dummy, ',');
+    std::getline(ss, categoryStr, ',');
+
     Category category = parseCategory(categoryStr);
-    News* news = new News(std::to_string(id), "", text, category);
+    News* news = new News(std::to_string(id), "Generated Title", text, category);
     newsDb->add(news);
     id++;
   }
@@ -61,17 +62,24 @@ int main() {
   std::string newsFilename = "news_database.bin";
   NewsDatabase* newsDb = NewsDatabase::getInstance(newsFilename);
   //user session 객체 생성
-  // UserSession* session = UserSession::getInstance();
+  UserSession* session = UserSession::getInstance();
 
-  // GlobalCommand globalCommand(userDb, newsDb);
-  // globalCommand.printWelcome();
-  // globalCommand.showMenu();
-
-  loadNewsFromCSV("news_article_categorization.csv", newsDb);
-
-  std::vector<News> newsList = newsDb->loadFromFile();
-  for (const auto& news : newsList) {
-    std::cout << "Retrieved News: " << news.getId() << " - " << news.getContent() << std::endl;
+  GlobalCommand globalCommand(userDb, newsDb);
+  globalCommand.printWelcome();
+  
+  while (!session->isAuthenticated()) {
+    globalCommand.showMenu();
+    if (session->isAuthenticated()) {
+      std::cout << "Welcome, " << session->getUserName() << "!\n";
+      break;
+    }
   }
+
+  //loadNewsFromCSV("news_article_categorization.csv", newsDb);
+
+  // std::vector<News> newsList = newsDb->loadFromFile();
+  // for (const auto& news : newsList) {
+  //   std::cout << "Retrieved News: " << news.getId() << " - " << news.getContent() << std::endl;
+  // }
   return 0;
 }

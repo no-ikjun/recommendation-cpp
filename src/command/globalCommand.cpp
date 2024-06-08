@@ -35,9 +35,9 @@ void GlobalCommand::showMenu() {
   std::cout << CYAN << "Enter your choice (1-3): " << RESET;
   
   while (!(std::cin >> choice) || choice < 1 || choice > 3) {
-      std::cout << RED << "Invalid input. Please enter a number between 1 and 3: " << RESET;
-      std::cin.clear(); // Clears error flag on cin
-      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discards the buffer
+    std::cout << RED << "Invalid input. Please enter a number between 1 and 3: " << RESET;
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
   }
 
   UserCommand userCommand(userDb);
