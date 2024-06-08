@@ -67,11 +67,11 @@ int main() {
   // globalCommand.printWelcome();
   // globalCommand.showMenu();
 
-  //loadNewsFromCSV("news_article_categorization.csv", newsDb);
+  loadNewsFromCSV("news_article_categorization.csv", newsDb);
 
   std::vector<News> newsList = newsDb->loadFromFile();
   for (const auto& news : newsList) {
-    std::cout << "Retrieved News: " << news.getTitle() << " - " << news.getContent() << std::endl;
+    std::cout << "Retrieved News: " << news.getId() << " - " << news.getContent() << std::endl;
   }
   return 0;
 }
