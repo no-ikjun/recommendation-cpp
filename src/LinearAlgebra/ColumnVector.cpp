@@ -106,6 +106,9 @@ double ColumnVector::euclideanDistance(const ColumnVector& other) const {
 }
 
 double ColumnVector::cosineSimilarity(const ColumnVector& other) const {
+  if(this->norm() == 0 || other.norm() == 0) {
+    return 0;
+  }
   double result = this->dot(other) / (this->norm() * other.norm());
   return result;
 }
