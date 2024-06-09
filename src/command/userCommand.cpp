@@ -1,6 +1,9 @@
 #include "command/UserCommand.h"
 #include "session/UserSession.h"
 #include <iostream>
+#include <sstream>
+#include <limits>
+#include <vector>
 
 const std::string RED = "\033[31m";
 const std::string GREEN = "\033[32m";
@@ -14,6 +17,7 @@ void UserCommand::signUp() {
     std::cout << "Sign Up " << YELLOW << "(Input Your Personal Information)" << RESET << std::endl;
 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.clear();
 
     std::cout << "ID: ";
     std::getline(std::cin, id);
@@ -23,7 +27,7 @@ void UserCommand::signUp() {
     std::getline(std::cin, password);
 
     try {
-      User newUser(id, name, password);
+      User newUser(id, name, password, {});
       userDb->add(&newUser);
       std::cout << GREEN << "Registration successful." << RESET << std::endl;
       registrationSuccessful = true;
@@ -33,7 +37,7 @@ void UserCommand::signUp() {
       char response;
       std::cin >> response;
       if (response != 'y' && response != 'Y') {
-        registrationSuccessful = true; // End loop if user does not want to retry
+        registrationSuccessful = true;
       }
     }
   } while (!registrationSuccessful);
@@ -46,7 +50,8 @@ void UserCommand::signIn() {
     std::cout << "Sign In" << std::endl;
 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    
+    std::cin.clear();
+
     std::cout << "ID: ";
     std::getline(std::cin, id);
     std::cout << "Password: ";
@@ -78,24 +83,42 @@ void UserCommand::signIn() {
 //   std::cout << "Setting preferences...\n";
 //   std::cout << "Enter your interests separated by spaces (e.g., technology science business): ";
 
-//   std::string input;
-//   std::getline(std::cin, input);  // 전체 라인 입력 받기
+  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ensure buffer is clear
+  std::string input;
+  std::getline(std::cin, input);  // 전체 라인 입력 받기
 
 //   std::istringstream iss(input);
 //   std::vector<std::string> interests;
 //   std::string interest;
 
-//   // 공백을 기준으로 입력 받은 라인을 나누기
-//   while (iss >> interest) {
-//       interests.push_back(interest);
-//   }
+  // 공백을 기준으로 입력 받은 라인을 나누기
+  while (iss >> interest) {
+    interests.push_back(interest);
+  }
 
-//   // 저장된 관심사 출력
-//   std::cout << "You have entered the following interests:\n";
-//   for (const auto& item : interests) {
-//       std::cout << "- " << item << std::endl;
-//   }
-// }
+  // 저장된 관심사 출력
+  std::cout << "You have entered the following interests:\n";
+  for (const auto& item : interests) {
+    std::cout << "- " << item << std::endl;
+  }
+
+  if (interests.empty()) {
+    std::cout << "No interests entered, returning...\n";
+    return;
+  }
+
+  try {
+    UserSession* session = UserSession::getInstance();
+    User updatedUserData = userDb->get(session->getUserId());
+    //TODO: Wod2Vec 연결해서 관심사를 벡터로 변환
+    std::vector<double> prefData = {0.1, 1.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8};
+    updatedUserData.setPreference(prefData);
+    userDb->update(session->getUserId(), &updatedUserData);
+    std::cout << "Preferences updated successfully.\n";
+  } catch (const std::exception& e) {
+    std::cerr << "Failed to update preferences: " << e.what() << std::endl;
+  }
+}
 
 void UserCommand::printError(const std::string& message) {
   std::cout << RED << "User Command Error: " << message << RESET << std::endl;

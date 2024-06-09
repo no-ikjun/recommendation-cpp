@@ -7,7 +7,10 @@
 class User {
 public:
   User();
-  User(const std::string& id, const std::string& name, const std::string& password);
+  User(const std::string& id,
+       const std::string& name,
+       const std::string& password,
+       const std::vector<double>& preference);
 
   std::string getId() const;
   std::string getName() const;

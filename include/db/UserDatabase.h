@@ -27,6 +27,8 @@ public:
   void saveToFile(const User& user);
   std::vector<User> loadFromFile();
 
+  void update(std::string id, void* item);
+
   virtual ~UserDatabase() {}
 };
 
