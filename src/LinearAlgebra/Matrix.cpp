@@ -10,7 +10,7 @@
 #include <system_error>
 #include <fstream>
 #include <string>
-
+#include <ios>
 
 namespace LinearAlgebra{
 
@@ -273,15 +273,16 @@ namespace LinearAlgebra{
     file.read(reinterpret_cast<char*>(&rows), sizeof(int));
     file.read(reinterpret_cast<char*>(&cols), sizeof(int));
 
-    this->rows = rows;
-    this->cols = cols;
-    this->data.resize(rows, std::vector<double>(cols));
-
-    for (std::vector<double>& row : this->data) {
+    Matrix result(rows, cols);
+    for (int i = 0; i < rows; ++i) {
+      std::vector<double> row(cols);
       file.read(reinterpret_cast<char*>(row.data()), sizeof(double) * cols);
+      result.data[i] = row;
     }
 
     file.close();
+
+    *this = result;
   }
 
 }

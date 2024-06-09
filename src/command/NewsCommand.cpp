@@ -14,7 +14,6 @@ bool NewsCommand::printNews(std::string id) {
   try {
     News news = newsDb->get(id);
     std::cout << "Title: " << news.getTitle() << std::endl;
-    std::cout << "Author: " << news.getAuthor() << std::endl;
     std::cout << "Content: " << news.getContent() << std::endl;
     return true;
   } catch (const std::exception& e) {
