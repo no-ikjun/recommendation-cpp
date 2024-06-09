@@ -1,6 +1,8 @@
 #ifndef CATEGORY_H
 #define CATEGORY_H
 
+#include <string>
+
 enum class Category {
   ENTERTAINMENT, 
   SCIENCE,
