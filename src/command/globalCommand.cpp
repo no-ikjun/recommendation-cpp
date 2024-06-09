@@ -1,5 +1,6 @@
 #include "command/GlobalCommand.h"
 #include "command/UserCommand.h"
+#include "command/NewsCommand.h"
 #include "session/UserSession.h"
 #include <iostream>
 #include <string>
@@ -80,6 +81,7 @@ void GlobalCommand::showUserMenu() {
   }
 
   UserCommand userCommand(userDb);
+  NewsCommand newsCommand(newsDb);
 
   #if defined(_WIN32) || defined(_WIN64)
   system("cls"); // Windows
@@ -92,7 +94,7 @@ void GlobalCommand::showUserMenu() {
       userCommand.setPref();
       break;
     case 2:
-      //userCommand.getRecommendation();
+      newsCommand.getRecommendation();
       break;
     case 3:
       session->logout();
