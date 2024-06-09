@@ -81,7 +81,7 @@ void GlobalCommand::showUserMenu() {
   }
 
   UserCommand userCommand(userDb);
-  NewsCommand newsCommand(newsDb);
+  NewsCommand newsCommand(newsDb, userDb);
 
   #if defined(_WIN32) || defined(_WIN64)
   system("cls"); // Windows

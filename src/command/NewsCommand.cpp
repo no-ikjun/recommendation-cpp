@@ -2,9 +2,10 @@
 #include "command/NewsCommand.h"
 #include "session/UserSession.h"
 #include "data/User.h"
+#include "db/UserDatabase.h"
 #include "recommender/Recommender.h"
 #include "recommender/Word2Vec.h"
-#include "data/Vocabulary.h"
+#include "recommender/Vocabulary.h"
 #include <iostream>
 #include <string>
 #include <iomanip>
@@ -22,12 +23,12 @@ void NewsCommand::getRecommendation() {
   std::string userId = session->getUserId();
   User user = userDb->get(userId);
 
-  // Vocabulary vocabulary;
-  // vocabulary.loadFrom("./src/recommender/vocabulary.bin");
-  // Wor2Vec word2vec(300, 3, vocabulary);
-  // LinearAlgebra::ColumnVector = word2vec.embed("any string here");
+  Vocabulary vocabulary;
+  vocabulary.loadFrom("./src/recommender/vocabulary.bin");
+  Word2Vec word2vec(300, 3, vocabulary);
+  word2vec.embed("any string here");
 
-  // Recommender recommender(word2vec);
+  Recommender recommender(word2vec);
   std::string newsId = recommender.getRecommendation(user, *newsDb);
   printNews(newsId);
 }
