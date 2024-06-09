@@ -1,7 +1,10 @@
 #include "command/GlobalCommand.h"
 #include "command/NewsCommand.h"
+
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <sstream>
 
 const std::string RED = "\033[31m";
 const std::string GREEN = "\033[32m";

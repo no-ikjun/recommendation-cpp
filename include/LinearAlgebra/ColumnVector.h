@@ -31,6 +31,9 @@ namespace LinearAlgebra {
     RowVector transpose() const;
 
     void print(bool compact=false) const override;
+
+    void serialize(std::ostream& os) const;
+    void deserialize(std::istream& is);
   };
   
 }

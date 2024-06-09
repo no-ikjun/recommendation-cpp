@@ -1,6 +1,8 @@
 #ifndef USER_H
 #define USER_H
 
+#include "LinearAlgebra/ColumnVector.h"
+
 #include <string>
 #include <vector>
 
@@ -9,14 +11,13 @@ public:
   User();
   User(const std::string& id,
        const std::string& name,
-       const std::string& password,
-       const std::vector<double>& preference);
+       const std::string& password);
 
   std::string getId() const;
   std::string getName() const;
   std::string getPassword() const;
-  std::vector<double> getPreference() const;
-  void setPreference(const std::vector<double>& preference);
+  LinearAlgebra::ColumnVector getPreference() const;
+  void setPreference(const LinearAlgebra::ColumnVector& preference);
 
   void serialize(std::ostream& os) const;
   bool deserialize(std::istream& is);
@@ -25,7 +26,7 @@ private:
   std::string id;
   std::string name;
   std::string password;
-  std::vector<double> preference;
+  LinearAlgebra::ColumnVector preference;
 };
 
 #endif // USER_H

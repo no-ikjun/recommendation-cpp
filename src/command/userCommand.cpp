@@ -1,5 +1,6 @@
 #include "command/UserCommand.h"
 #include "session/UserSession.h"
+#include "recommender/Model.h"
 #include <iostream>
 #include <sstream>
 #include <limits>
@@ -27,8 +28,11 @@ void UserCommand::signUp() {
     std::getline(std::cin, password);
 
     try {
-      User newUser(id, name, password, {});
+      std::cout << "Creating new user..." << std::endl;
+      User newUser(id, name, password);
+      std::cout << "Adding user to database..." << std::endl;
       userDb->add(&newUser);
+      std::cout << "User added successfully." << std::endl;
       std::cout << GREEN << "Registration successful." << RESET << std::endl;
       registrationSuccessful = true;
     } catch (const std::exception& e) {
@@ -79,7 +83,7 @@ void UserCommand::signIn() {
   } while (!loginSuccessful);
 }
 
-void UserCommand::setPref() {
+void UserCommand::setPref(Model* model) {
   std::cout << "Setting preferences...\n";
   std::cout << "Enter your interests separated by spaces (e.g., technology science business): ";
 
@@ -111,9 +115,7 @@ void UserCommand::setPref() {
   try {
     UserSession* session = UserSession::getInstance();
     User updatedUserData = userDb->get(session->getUserId());
-    //TODO: Wod2Vec 연결해서 관심사를 벡터로 변환
-    std::vector<double> prefData = {0.1, 1.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8};
-    updatedUserData.setPreference(prefData);
+    updatedUserData.setPreference(model->embed(input));
     userDb->update(session->getUserId(), &updatedUserData);
     std::cout << "Preferences updated successfully.\n";
   } catch (const std::exception& e) {

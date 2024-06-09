@@ -1,6 +1,7 @@
 #include "command/GlobalCommand.h"
 #include "command/UserCommand.h"
 #include "session/UserSession.h"
+#include "recommender/Model.h"
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -64,7 +65,7 @@ void GlobalCommand::showMenu() {
   }
 }
 
-void GlobalCommand::showUserMenu() {
+void GlobalCommand::showUserMenu(Model* model) {
   int choice = 0;
   UserSession* session = UserSession::getInstance();
   std::cout << YELLOW << "\n===== Welcome, " << session->getUserName() << " =====\n" << RESET;
@@ -89,10 +90,10 @@ void GlobalCommand::showUserMenu() {
 
   switch (choice) {
     case 1:
-      userCommand.setPref();
+      userCommand.setPref(model);
       break;
     case 2:
-      //userCommand.getRecommendation();
+      // model->getRecommendation();
       break;
     case 3:
       session->logout();

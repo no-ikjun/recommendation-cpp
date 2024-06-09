@@ -3,6 +3,7 @@
 
 #include "db/UserDatabase.h"
 #include "db/NewsDatabase.h"
+#include "recommender/Model.h"
 #include <string>
 #include <iostream>
 

@@ -4,21 +4,30 @@
 #include "../../include/data/News.h"
 
 #include <vector>
+#include <memory>
 
-Recommender::Recommender(Model& model) : model(model) {}
+Recommender::Recommender(Model* model_ptr) : model_ptr(model_ptr) {}
+
+void Recommender::embedContents(NewsDatabase& newsDatabase){
+  std::vector<News> all_news = newsDatabase.loadFromFile();
+  for (auto& news : all_news) {
+    news.setEmbedding(this->model_ptr->embed(news.getContent()));
+    newsDatabase.saveToFile(news);
+  }
+}
 
 std::string Recommender::getRecommendation(User& user, NewsDatabase& newsDatabase){
-  // LinearAlgebra::ColumnVector userPreference(user.getPreferences());
-  // std::vector<News> all_news = newsDatabase.loadFromFile();
-  // std::string bestNewsId;
-  // double bestScore = -1;
-  // for (const auto& news : all_news) {
-  //   LinearAlgebra::ColumnVector newsVector = this->model.embed(news.getContent());
-  //   double score = userPreference.cosineSimilarity(newsVector);
-  //   if (score > bestScore) {
-  //     bestScore = score;
-  //     bestNewsId = news.getId();
-  //   }
-  // }
-  // return bestNewsId;
+  LinearAlgebra::ColumnVector userPreference(user.getPreference());
+  std::vector<News> all_news = newsDatabase.loadFromFile();
+  std::string bestNewsId;
+  double bestScore = -1;
+  for (const auto& news : all_news) {
+    LinearAlgebra::ColumnVector newsVector = this->model_ptr->embed(news.getContent());
+    double score = userPreference.cosineSimilarity(newsVector);
+    if (score > bestScore) {
+      bestScore = score;
+      bestNewsId = news.getId();
+    }
+  }
+  return bestNewsId;
 }

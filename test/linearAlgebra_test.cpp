@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <fstream>
 
 using namespace LinearAlgebra;
 
@@ -63,14 +64,44 @@ int main() {
   std::cout << std::endl;
 
 
+
+  // Save cv1
+  std::ofstream outfile("cv1.bin", std::ios::binary);
+  if (outfile.is_open()) {
+    cv1.serialize(outfile);
+    outfile.close();
+    std::cout << "cv1 saved successfully." << std::endl;
+  } else {
+    std::cout << "Failed to open file for saving cv1." << std::endl;
+  }
+
+  // Load cv4
+  ColumnVector cv4(4, true);
+  std::ifstream infile("cv1.bin", std::ios::binary);
+  if (infile.is_open()) {
+    cv4.deserialize(infile);
+    infile.close();
+    std::cout << "cv4 loaded successfully." << std::endl;
+    std::cout << "cv4: " << std::endl;
+    cv4.print();
+    std::cout << std::endl;
+  } else {
+    std::cout << "Failed to open file for loading cv4." << std::endl;
+  }
+
+
+
   // Test RowVector
-  std::cout << "\nTesting RowVector:" << std::endl;
+  std::cout << "Testing RowVector:" << std::endl;
   RowVector rv1(3, true);
   RowVector rv2(3, true);
-  RowVector rv3(rv1);  // Test copy constructor
-
+  
   std::cout << "rv1: " << std::endl;
   rv1.print();
+  std::cout << std::endl;
+
+  std::cout << "rv2: " << std::endl;
+  rv2.print();
   std::cout << std::endl;
 
   std::cout << "rv2: " << std::endl;

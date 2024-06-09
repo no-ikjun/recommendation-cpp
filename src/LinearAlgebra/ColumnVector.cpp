@@ -138,3 +138,19 @@ void ColumnVector::print(bool compact) const {
     }
   }
 }
+
+void ColumnVector::serialize(std::ostream& os) const {
+  os << this->getDimension() << " ";
+  for(int i = 0; i < this->getDimension(); ++i) {
+    os << (*this)(i) << " ";
+  }
+}
+
+void ColumnVector::deserialize(std::istream& is) {
+  int dimension;
+  is >> dimension;
+  this->data.resize(dimension);
+  for(int i = 0; i < this->getDimension(); ++i) {
+    is >> (*this)(i);
+  }
+}

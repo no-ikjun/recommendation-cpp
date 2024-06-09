@@ -12,11 +12,12 @@
 
 class Recommender{
 public:
-  Recommender(Model&);
+  Recommender(Model* model_ptr);
+  void embedContents(NewsDatabase&);
   std::string getRecommendation(User&, NewsDatabase&);
 
 private:
-  Model& model;
+  Model* model_ptr;
 };
 
 #endif

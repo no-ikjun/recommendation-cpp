@@ -22,15 +22,22 @@ UserDatabase* UserDatabase::getInstance(const std::string& filename) {
 }
 
 void UserDatabase::add(void* item) {
+  std::cout << "1" << std::endl;
   User* user = static_cast<User*>(item);
+  std::cout << "2" << std::endl;
   if (user) {
     try {
+      std::cout << "3" << std::endl;
       User duplicatedUser = get(user->getId());
+      std::cout << "4" << std::endl;
       if (duplicatedUser.getId() == user->getId()) {
         throw std::runtime_error("User with id " + user->getId() + " already exists.");
       }
+      std::cout << "5" << std::endl;
     } catch (const std::invalid_argument& e) {
+      std::cout << "6" << std::endl;
       saveToFile(*user);
+      std::cout << "7" << std::endl;
     }
   } else {
     std::cerr << "Error: Null user pointer passed to add function." << std::endl;
