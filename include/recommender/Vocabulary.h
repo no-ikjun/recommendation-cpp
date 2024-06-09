@@ -13,7 +13,7 @@ public:
   std::unordered_map<std::string, int> getVocab();
   int getVocabSize();
   int getId(std::string);
-  void create(std::filesystem::path, int maxVocabSize);
+  void create(std::filesystem::path, size_t maxVocabSize);
   void saveAs(std::filesystem::path);
   void loadFrom(std::filesystem::path);
 private:

@@ -30,7 +30,7 @@ int Vocabulary::getId(std::string token) {
   }
 }
 
-void Vocabulary::create(std::filesystem::path datasetPath, int maxVocabSize) {
+void Vocabulary::create(std::filesystem::path datasetPath, size_t maxVocabSize) {
   std::cout << "\n@Vocabulary" << std::endl;
 
   std::cout
@@ -61,7 +61,7 @@ void Vocabulary::create(std::filesystem::path datasetPath, int maxVocabSize) {
       std::cout << "      Tokenizing... " << std::endl;
       while (std::getline(file, line)) {
         std::vector<std::string> tokens = tokenize(line);
-        for(const std::string token: tokens) {
+        for(const std::string& token: tokens) {
           auto it = histogram.find(token);
           if(it != histogram.end()) {
             ++histogram[token];
