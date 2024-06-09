@@ -14,10 +14,10 @@
 
 int main() {
   //userDB 객체 생성
-  std::string userFilename = "user_database.bin";
+  std::string userFilename = "./data/bin/user_database.bin";
   UserDatabase* userDb = UserDatabase::getInstance(userFilename);
   //newsDB 객체 생성
-  std::string newsFilename = "news_database.bin";
+  std::string newsFilename = "./data/bin/news_database.bin";
   NewsDatabase* newsDb = NewsDatabase::getInstance(newsFilename);
   //user session 객체 생성
   UserSession* session = UserSession::getInstance();
@@ -38,7 +38,7 @@ int main() {
   //   printPreferences(user.getPreference());
   // }
 
-  //loadNewsFromCSV("news_article_categorization.csv", newsDb);
+  //loadNewsFromCSV("./data/news_dataset/news_article_categorization.csv", newsDb);
 
   // std::vector<News> newsList = newsDb->loadFromFile();
   // for (const auto& news : newsList) {
