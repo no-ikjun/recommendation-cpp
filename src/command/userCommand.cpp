@@ -79,17 +79,17 @@ void UserCommand::signIn() {
   } while (!loginSuccessful);
 }
 
-void UserCommand::setPref() {
-  std::cout << "Setting preferences...\n";
-  std::cout << "Enter your interests separated by spaces (e.g., technology science business): ";
+// void UserCommand::setPref() {
+//   std::cout << "Setting preferences...\n";
+//   std::cout << "Enter your interests separated by spaces (e.g., technology science business): ";
 
   std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ensure buffer is clear
   std::string input;
   std::getline(std::cin, input);  // 전체 라인 입력 받기
 
-  std::istringstream iss(input);
-  std::vector<std::string> interests;
-  std::string interest;
+//   std::istringstream iss(input);
+//   std::vector<std::string> interests;
+//   std::string interest;
 
   // 공백을 기준으로 입력 받은 라인을 나누기
   while (iss >> interest) {

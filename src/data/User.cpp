@@ -1,6 +1,8 @@
 #include "data/User.h"
 #include <iostream>
 #include <sstream>
+#include <vector>
+#include <string>
 
 User::User() : id(""), name(""), password(""), preference({}) {}
 

@@ -135,22 +135,38 @@ void Vocabulary::loadFrom(std::filesystem::path filePath) {
   std::cout << "\n@Vocabulary" << std::endl;
 
   std::ifstream file(filePath, std::ios::binary);
-  if (file.is_open()) {
-    std::cout << "  Loading vocabulary from " << filePath << "..." << std::endl;
-    size_t vocabSize;
-    file.read(reinterpret_cast<char*>(&vocabSize), sizeof(vocabSize));
-    for (size_t i = 0; i < vocabSize; ++i) {
-      size_t tokenSize;
-      file.read(reinterpret_cast<char*>(&tokenSize), sizeof(tokenSize));
-      std::string token(tokenSize, '\0');
-      file.read(&token[0], tokenSize);
-      int id;
-      file.read(reinterpret_cast<char*>(&id), sizeof(id));
-      this->vocab[token] = id;
-    }
-    std::cout << "  Vocabulary loaded successfully" << std::endl;
-    file.close();
-  } else {
+  if (!file.is_open()) {
     throw std::runtime_error("Cannot open file: " + filePath.string());
   }
+
+  std::cout << "  Loading vocabulary from " << filePath << "..." << std::endl;
+
+  size_t vocabSize;
+  file.read(reinterpret_cast<char*>(&vocabSize), sizeof(vocabSize));
+
+  for (size_t i = 0; i < vocabSize; ++i) {
+    size_t tokenSize;
+    file.read(reinterpret_cast<char*>(&tokenSize), sizeof(tokenSize));
+    if (tokenSize > 0) {
+      std::string token(tokenSize, '\0');
+      file.read(&token[0], tokenSize);
+      if (!file) {
+        throw std::runtime_error("Error reading token data");
+      }
+
+      int id;
+      file.read(reinterpret_cast<char*>(&id), sizeof(id));
+
+      if (!file) {
+        throw std::runtime_error("Error reading token id");
+      }
+
+      this->vocab[token] = id;
+    } else {
+        throw std::runtime_error("Invalid token size read");
+    }
+  }
+
+  std::cout << "  Vocabulary loaded successfully" << std::endl;
+  file.close();
 }

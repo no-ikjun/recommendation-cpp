@@ -8,20 +8,15 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 class Recommender{
 public:
-  Recommender(User&, std::unique_ptr<NewsDatabase>, Model&);
-  std::unique_ptr<Data> getRecommendation();
-  void updatePreference(std::string contentId, bool feedback);
-  void reset();
+  Recommender(Model&);
+  std::string getRecommendation(User&, NewsDatabase&);
 
 private:
-  User user;
-  std::unique_ptr<NewsDatabase> newsDatabase;
   Model model;
-
-  std::string prevRecommendedContentID;
 };
 
 #endif

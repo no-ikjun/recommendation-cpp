@@ -26,8 +26,8 @@ LinearAlgebra::ColumnVector Word2Vec::embed(std::string string) {
   for(std::string& token: tokens) {
     int tokenId = this->vocabulary.getId(token);
     if(tokenId == 0) continue; // add 0 vector for <unk> token
-    embeddingVector += this->encoderWeights.getRow(tokenId) / knownTokenCounter;
     knownTokenCounter++;
+    embeddingVector += this->encoderWeights.getRow(tokenId) / knownTokenCounter;
   }
   return embeddingVector.transpose();
 }
@@ -159,14 +159,10 @@ void Word2Vec::saveWeights(const std::string& filePath) {
   std::cout << "\n@Word2Vec" << std::endl;
   std::cout << "  Saving model weights to " << filePath << "... " << std::endl;
 
-  std::filesystem::path p(filePath);
-  std::string stem = p.stem().string();
-  std::string extension = p.extension().string();
-
-  std::cout << "    Saving encoder matrix weights as " << stem + "_encoder" + extension << " ..." << std::endl;
-  this->encoderWeights.saveAs(stem + "_encoder" + extension);
-  std::cout << "    Saving decoder matrix weights as " << stem + "_decoder" + extension << " ..." << std::endl;
-  this->decoderWeights.saveAs(stem + "_decoder" + extension);
+  std::cout << "    Saving encoder matrix weights as " << filePath + "_encoder.bin" << " ..." << std::endl;
+  this->encoderWeights.saveAs(filePath + "_encoder.bin");
+  std::cout << "    Saving decoder matrix weights as " << filePath + "_decoder.bin" << " ..." << std::endl;
+  this->decoderWeights.saveAs(filePath + "_decoder.bin");
 
   std::cout << "  Model weights saved" << std::endl;
 }
@@ -175,14 +171,10 @@ void Word2Vec::loadWeights(const std::string& filePath) {
   std::cout << "\n@Word2Vec" << std::endl;
   std::cout << "  Loading model weights from " << filePath << "... " << std::endl;
 
-  std::filesystem::path p(filePath);
-  std::string stem = p.stem().string();
-  std::string extension = p.extension().string();
-
-  std::cout << "    Loading encoder matrix weights from " << stem + "_encoder" + extension << " ..." << std::endl;
-  this->encoderWeights.loadFrom(stem + "_encoder" + extension);
-  std::cout << "    Loading decoder matrix weights from " << stem + "_decoder" + extension << " ..." << std::endl;
-  this->decoderWeights.loadFrom(stem + "_decoder" + extension);
+  std::cout << "    Loading encoder matrix weights from " << filePath + "_encoder.bin" << " ..." << std::endl;
+  this->encoderWeights.loadFrom(filePath + "_encoder.bin");
+  std::cout << "    Loading decoder matrix weights from " << filePath + "_decoder.bin" << " ..." << std::endl;
+  this->decoderWeights.loadFrom(filePath + "_decoder.bin");
 
   std::cout << "  Model weights loaded" << std::endl;
 }

@@ -10,7 +10,7 @@ private:
 
 public:
   explicit NewsCommand(NewsDatabase* db) : newsDb(db) {}
-  void printNews(string id);
+  bool printNews(std::string id);
   void printError(const std::string& message);
 };
 
