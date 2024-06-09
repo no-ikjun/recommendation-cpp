@@ -1,0 +1,68 @@
+# Define compiler
+CXX := g++
+
+# Compiler flags
+CXXFLAGS := -std=c++17 -Iinclude -g
+
+# Source files directory
+SRC_DIR := src
+TEST_DIR := test
+
+# Object files directory
+OBJ_DIR := build/obj
+TEST_OBJ_DIR := $(OBJ_DIR)/test
+
+# Executables directory
+BIN_DIR := build/bin
+TEST_BIN_DIR := $(BIN_DIR)/test
+MAIN_BIN_DIR := $(BIN_DIR)/main
+
+# Source files
+SRC := $(wildcard $(SRC_DIR)/**/*.cpp $(SRC_DIR)/*.cpp)
+TEST_SRC := $(wildcard $(TEST_DIR)/*.cpp)
+
+# Object files
+OBJ := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC))
+TEST_OBJ := $(patsubst $(TEST_DIR)/%.cpp,$(TEST_OBJ_DIR)/%.o,$(TEST_SRC))
+
+# Object files without main.cpp
+SRC_OBJ := $(filter-out $(OBJ_DIR)/main.o, $(OBJ))
+
+# Executables
+TEST_EXE := $(TEST_OBJ:$(TEST_OBJ_DIR)/%.o=$(TEST_BIN_DIR)/%.exe)
+MAIN_EXE := $(MAIN_BIN_DIR)/main.exe
+
+# Default target
+all: test_executables main_executable
+
+# Rule to create the object files directory if necessary
+$(shell mkdir -p $(dir $(OBJ)) $(dir $(TEST_OBJ)) $(BIN_DIR) $(TEST_BIN_DIR) $(MAIN_BIN_DIR))
+
+# Rule to make object files from source files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Rule to make object files from test source files
+$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Rule to make test executables
+$(TEST_BIN_DIR)/%.exe: $(TEST_OBJ_DIR)/%.o $(SRC_OBJ)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+# Rule to make main executable
+$(MAIN_EXE): $(OBJ)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+# Target to build all test executables
+test_executables: $(TEST_EXE)
+
+# Target to build main executable
+main_executable: $(MAIN_EXE)
+
+# Clean rule
+clean:
+	rm -rf $(OBJ_DIR)/*.o $(TEST_OBJ_DIR)/*.o $(BIN_DIR)/*
+
+# Phony targets
+.PHONY: all test_executables main_executable clean
