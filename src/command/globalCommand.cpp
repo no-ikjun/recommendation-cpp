@@ -2,6 +2,8 @@
 #include "command/UserCommand.h"
 #include "command/NewsCommand.h"
 #include "session/UserSession.h"
+#include "recommender/Recommender.h"
+#include "data/User.h"
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -91,10 +93,10 @@ void GlobalCommand::showUserMenu() {
 
   switch (choice) {
     case 1:
-      userCommand.setPref();
+      userCommand.setPref(this->recommender);
       break;
     case 2:
-      newsCommand.getRecommendation();
+      newsCommand.printNews(this->recommender->getRecommendation((this->userDb->get(session->getUserId())), (this->newsDb)));
       break;
     case 3:
       session->logout();

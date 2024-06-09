@@ -13,4 +13,6 @@ enum class Category {
   NONE
 };
 
+Category parseCategory(const std::string& categoryStr);
+
 #endif

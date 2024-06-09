@@ -9,6 +9,8 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
+#include <fstream>
+#include <sstream>
 
 const std::string RED = "\033[31m";
 const std::string GREEN = "\033[32m";
@@ -28,9 +30,7 @@ void NewsCommand::getRecommendation() {
   Word2Vec word2vec(300, 3, vocabulary);
   word2vec.embed("any string here");
 
-  Recommender recommender(word2vec);
-  std::string newsId = recommender.getRecommendation(user, *newsDb);
-  printNews(newsId);
+  // printNews(newsId);
 }
 
 bool NewsCommand::printNews(std::string id) {

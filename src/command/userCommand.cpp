@@ -1,5 +1,7 @@
 #include "command/UserCommand.h"
 #include "session/UserSession.h"
+#include "LinearAlgebra/ColumnVector.h"
+#include "recommender/Recommender.h"
 #include <iostream>
 #include <sstream>
 #include <limits>
@@ -27,7 +29,8 @@ void UserCommand::signUp() {
     std::getline(std::cin, password);
 
     try {
-      User newUser(id, name, password, {});
+      LinearAlgebra::ColumnVector tempPref = LinearAlgebra::ColumnVector(1);
+      User newUser(id, name, password, tempPref);
       userDb->add(&newUser);
       std::cout << GREEN << "Registration successful." << RESET << std::endl;
       registrationSuccessful = true;
@@ -79,7 +82,13 @@ void UserCommand::signIn() {
   } while (!loginSuccessful);
 }
 
-void UserCommand::setPref() {
+void UserCommand::setPref(Recommender* recommender) {
+  UserSession* session = UserSession::getInstance();
+  User userData = userDb->get(session->getUserId());
+  LinearAlgebra::ColumnVector prefData = userData.getPreference();
+  std::cout << "Current preferences:\n";
+  prefData.print();
+
   std::cout << "Setting preferences...\n";
   std::cout << "Enter your interests separated by spaces (e.g., technology science business): ";
 
@@ -89,31 +98,11 @@ void UserCommand::setPref() {
   std::getline(std::cin, input);  // 전체 라인 입력 받기
 
   std::istringstream iss(input);
-  std::vector<std::string> interests;
-  std::string interest;
-
-  // 공백을 기준으로 입력 받은 라인을 나누기
-  while (iss >> interest) {
-    interests.push_back(interest);
-  }
-
-  // 저장된 관심사 출력
-  std::cout << "You have entered the following interests:\n";
-  for (const auto& item : interests) {
-    std::cout << "- " << item << std::endl;
-  }
-
-  if (interests.empty()) {
-    std::cout << "No interests entered, returning...\n";
-    return;
-  }
 
   try {
     UserSession* session = UserSession::getInstance();
     User updatedUserData = userDb->get(session->getUserId());
-    //TODO: Wod2Vec 연결해서 관심사를 벡터로 변환
-    std::vector<double> prefData = {0.1, 1.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8};
-    updatedUserData.setPreference(prefData);
+    updatedUserData.setPreference(recommender->embedPreference(input));
     userDb->update(session->getUserId(), &updatedUserData);
     std::cout << "Preferences updated successfully.\n";
   } catch (const std::exception& e) {

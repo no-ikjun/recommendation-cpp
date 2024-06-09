@@ -24,14 +24,15 @@ UserDatabase* UserDatabase::getInstance(const std::string& filename) {
 void UserDatabase::add(void* item) {
   User* user = static_cast<User*>(item);
   if (user) {
-    try {
-      User duplicatedUser = get(user->getId());
-      if (duplicatedUser.getId() == user->getId()) {
-        throw std::runtime_error("User with id " + user->getId() + " already exists.");
-      }
-    } catch (const std::invalid_argument& e) {
-      saveToFile(*user);
-    }
+    saveToFile(*user);
+    // try {
+    //   User duplicatedUser = get(user->getId());
+    //   if (duplicatedUser.getId() == user->getId()) {
+    //     throw std::runtime_error("User with id " + user->getId() + " already exists.");
+    //   }
+    // } catch (const std::invalid_argument& e) {
+    //   saveToFile(*user);
+    // }
   } else {
     std::cerr << "Error: Null user pointer passed to add function." << std::endl;
   }

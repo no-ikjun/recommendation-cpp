@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Category.h"
+#include "LinearAlgebra/ColumnVector.h"
 
 class News {
 public:
@@ -15,6 +16,9 @@ public:
   std::string getContent() const;
   Category getCategory() const;
 
+  LinearAlgebra::ColumnVector getEmbedding() const;
+  void setEmbedding(const LinearAlgebra::ColumnVector& embedding);
+
   void serialize(std::ostream& os) const;
   bool deserialize(std::istream& is);
 
@@ -23,6 +27,7 @@ private:
   std::string title;
   std::string content;
   Category category;
+  LinearAlgebra::ColumnVector embedding;
 };
 
 #endif // NEWS_H

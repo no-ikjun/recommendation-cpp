@@ -138,3 +138,23 @@ void ColumnVector::print(bool compact) const {
     }
   }
 }
+
+void ColumnVector::serialize(std::ostream& os) const {
+  if (!os) {
+    throw std::runtime_error("Output stream is not ready");
+  }
+  os << this->getDimension() << " ";
+  for(int i = 0; i < this->getDimension(); ++i) {
+    if (!(os << (*this)(i) << " ")) {
+      throw std::runtime_error("Failed to write data");
+    }
+  }
+}
+
+void ColumnVector::deserialize(std::istream& is) {
+  int dimension;
+  this->data.resize(dimension);
+  for (int i = 0; i < this->getDimension(); ++i) {
+    is >> this->data[i];
+  }
+}

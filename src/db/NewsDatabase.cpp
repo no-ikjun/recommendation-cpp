@@ -1,10 +1,13 @@
 #include "db/NewsDatabase.h"
+#include "data/News.h"
+#include "data/Category.h"
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include <string>
 #include <mutex>
 #include <vector>
+#include <sstream>
 
 NewsDatabase* NewsDatabase::instance = nullptr;
 std::mutex NewsDatabase::mutex;
@@ -69,4 +72,30 @@ std::vector<News> NewsDatabase::loadFromFile() {
   }
   file.close();
   return newsList;
+}
+
+void NewsDatabase::loadFromCSV(const std::string& filename) {
+  std::ifstream file(filename);
+  std::string line;
+
+  std::getline(file, line);
+
+  std::cout << "Start loading news from " << filename << "\n";
+
+  int id = 1;
+  while (std::getline(file, line)) {
+    if (id  > 300) break;
+    std::istringstream ss(line);
+    std::string text, categoryStr, dummy;
+
+    std::getline(ss, dummy, '"');
+    std::getline(ss, text, '"');
+    std::getline(ss, dummy, ',');
+    std::getline(ss, categoryStr, ',');
+
+    Category category = parseCategory(categoryStr);
+    News* news = new News(std::to_string(id), "Generated Title", text, category);
+    this->saveToFile(*news);
+    id++;
+  }
 }

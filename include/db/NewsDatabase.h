@@ -26,6 +26,7 @@ public:
   News get(std::string id);
   void saveToFile(const News& news);
   std::vector<News> loadFromFile();
+  void loadFromCSV(const std::string& filename);
 
   virtual ~NewsDatabase() {}
 };

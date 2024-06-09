@@ -12,11 +12,13 @@
 
 class Recommender{
 public:
-  Recommender(Model&);
-  std::string getRecommendation(User&, NewsDatabase&);
+  Recommender(Model* model_ptr);
+  void embedContents(NewsDatabase&);
+  LinearAlgebra::ColumnVector embedPreference(const std::string&);
+  std::string getRecommendation(User, NewsDatabase*);
 
 private:
-  Model& model;
+  Model* model_ptr;
 };
 
 #endif
