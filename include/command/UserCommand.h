@@ -2,7 +2,7 @@
 #define USERCOMMAND_H
 
 #include "db/UserDatabase.h"
-#include "recommender/Model.h"
+#include "recommender/Recommender.h"
 #include <string>
 
 class UserCommand {
@@ -13,7 +13,7 @@ public:
   explicit UserCommand(UserDatabase* db) : userDb(db) {}
   void signUp();
   void signIn();
-  void setPref(Model*);
+  void setPref(Recommender*);
   void printError(const std::string& message);
 };
 

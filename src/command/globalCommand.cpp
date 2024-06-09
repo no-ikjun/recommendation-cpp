@@ -1,5 +1,6 @@
 #include "command/GlobalCommand.h"
 #include "command/UserCommand.h"
+#include "command/NewsCommand.h"
 #include "session/UserSession.h"
 #include "recommender/Model.h"
 #include <iostream>
@@ -65,7 +66,7 @@ void GlobalCommand::showMenu() {
   }
 }
 
-void GlobalCommand::showUserMenu(Model* model) {
+void GlobalCommand::showUserMenu() {
   int choice = 0;
   UserSession* session = UserSession::getInstance();
   std::cout << YELLOW << "\n===== Welcome, " << session->getUserName() << " =====\n" << RESET;
@@ -81,6 +82,7 @@ void GlobalCommand::showUserMenu(Model* model) {
   }
 
   UserCommand userCommand(userDb);
+  NewsCommand newsCommand(newsDb);
 
   #if defined(_WIN32) || defined(_WIN64)
   system("cls"); // Windows
@@ -90,10 +92,10 @@ void GlobalCommand::showUserMenu(Model* model) {
 
   switch (choice) {
     case 1:
-      userCommand.setPref(model);
+      userCommand.setPref(this->recommender);
       break;
     case 2:
-      // model->getRecommendation();
+      newsCommand.printNews(this->recommender->getRecommendation((this->userDb->get(session->getUserId())), (this->newsDb)));
       break;
     case 3:
       session->logout();

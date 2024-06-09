@@ -41,13 +41,13 @@ int main() {
   recommender.embedContents(*newsDb);
   std::cout << "2" << std::endl;
 
-  GlobalCommand globalCommand(userDb, newsDb);
+  GlobalCommand globalCommand(userDb, newsDb, &recommender);
   globalCommand.printWelcome();
   
   while (!session->isAuthenticated()) {
     globalCommand.showMenu();
     if (session->isAuthenticated()) {
-      globalCommand.showUserMenu(&word2vec);
+      globalCommand.showUserMenu();
       break;
     }
   }

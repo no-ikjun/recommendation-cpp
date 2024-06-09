@@ -16,13 +16,17 @@ void Recommender::embedContents(NewsDatabase& newsDatabase){
   }
 }
 
-std::string Recommender::getRecommendation(User& user, NewsDatabase& newsDatabase){
+LinearAlgebra::ColumnVector Recommender::embedPreference(const std::string& preference){
+  return this->model_ptr->embed(preference);
+}
+
+std::string Recommender::getRecommendation(User user, NewsDatabase* newsDatabase){
   LinearAlgebra::ColumnVector userPreference(user.getPreference());
-  std::vector<News> all_news = newsDatabase.loadFromFile();
+  std::vector<News> all_news = newsDatabase->loadFromFile();
   std::string bestNewsId;
   double bestScore = -1;
   for (const auto& news : all_news) {
-    LinearAlgebra::ColumnVector newsVector = this->model_ptr->embed(news.getContent());
+    LinearAlgebra::ColumnVector newsVector = news.getEmbedding();
     double score = userPreference.cosineSimilarity(newsVector);
     if (score > bestScore) {
       bestScore = score;

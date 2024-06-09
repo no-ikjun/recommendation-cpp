@@ -5,6 +5,7 @@
 #include "db/NewsDatabase.h"
 #include "data/Data.h"
 #include "recommender/Model.h"
+#include "LinearAlgebra/ColumnVector.h"
 
 #include <memory>
 #include <string>
@@ -14,7 +15,8 @@ class Recommender{
 public:
   Recommender(Model* model_ptr);
   void embedContents(NewsDatabase&);
-  std::string getRecommendation(User&, NewsDatabase&);
+  LinearAlgebra::ColumnVector embedPreference(const std::string&);
+  std::string getRecommendation(User, NewsDatabase*);
 
 private:
   Model* model_ptr;

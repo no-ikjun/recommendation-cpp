@@ -1,6 +1,6 @@
 #include "command/UserCommand.h"
 #include "session/UserSession.h"
-#include "recommender/Model.h"
+#include "recommender/Recommender.h"
 #include <iostream>
 #include <sstream>
 #include <limits>
@@ -83,7 +83,7 @@ void UserCommand::signIn() {
   } while (!loginSuccessful);
 }
 
-void UserCommand::setPref(Model* model) {
+void UserCommand::setPref(Recommender* recommender) {
   std::cout << "Setting preferences...\n";
   std::cout << "Enter your interests separated by spaces (e.g., technology science business): ";
 
@@ -115,7 +115,7 @@ void UserCommand::setPref(Model* model) {
   try {
     UserSession* session = UserSession::getInstance();
     User updatedUserData = userDb->get(session->getUserId());
-    updatedUserData.setPreference(model->embed(input));
+    updatedUserData.setPreference(recommender->embedPreference(input));
     userDb->update(session->getUserId(), &updatedUserData);
     std::cout << "Preferences updated successfully.\n";
   } catch (const std::exception& e) {
