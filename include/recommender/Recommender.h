@@ -1,10 +1,10 @@
 #ifndef RECOMMENDER_H
 #define RECOMMENDER_H
 
-#include "User.h"
-#include "NewsDatabase.h"
-#include "Data.h"
-#include "Model.h"
+#include "data/User.h"
+#include "db/NewsDatabase.h"
+#include "data/Data.h"
+#include "recommender/Model.h"
 
 #include <memory>
 #include <string>
@@ -16,7 +16,7 @@ public:
   std::string getRecommendation(User&, NewsDatabase&);
 
 private:
-  Model model;
+  Model& model;
 };
 
 #endif

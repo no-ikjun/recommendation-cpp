@@ -17,32 +17,32 @@ int main() {
 
   try {
     std::cout << "Looking for saved vocabulary..." << std::endl;
-    vocabulary.loadFrom("./src/recommender/vocabulary.bin");
+    vocabulary.loadFrom("./data/bin/vocabulary.bin");
   } catch (const std::exception& e) {
     std::cout << "Cannot find saved vocabulary" << std::endl;
     std::cout << "Generating vocabulary..." << std::endl;
-    vocabulary.create("./dataset/dataset_sm", 100000);
-    vocabulary.saveAs("./src/recommender/vocabulary.bin");
+    vocabulary.create("./data/word2vec_dataset/sm", 100000);
+    vocabulary.saveAs("./data/bin/vocabulary.bin");
   }
   Word2Vec word2vec(300, 3, vocabulary);
 
   try{
     std::cout << "Looking for saved model weights..." << std::endl;
-    word2vec.loadWeights("./src/recommender/weights");
+    word2vec.loadWeights("./data/bin/weights");
   } catch (const std::exception& e) {
     std::cout << "Cannot find saved model weights" << std::endl;
     try {
-      word2vec.loadCBOW("./src/recommender/cbow.bin");
+      word2vec.loadCBOW("./data/bin/cbow.bin");
     } catch (const std::exception& e) {
       std::cout << "Cannot find saved continuous bag of words" << std::endl;
       std::cout << "Generating continuous bag of words... " << std::endl;
-      word2vec.generateCBOW("./dataset/dataset_sm", 3);
-      word2vec.saveCBOW("./src/recommender/cbow.bin");
+      word2vec.generateCBOW("./data/word2vec_dataset/sm", 3);
+      word2vec.saveCBOW("./data/bin/cbow.bin");
     }
 
     word2vec.train(10000, 0.01);
 
-    word2vec.saveWeights("./src/recommender/weights");
+    word2vec.saveWeights("./data/bin/weights");
   }
   
   std::cout << "\nsun " << std::endl;

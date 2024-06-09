@@ -52,7 +52,7 @@ void Vector::normalize() {
   double norm = this->norm();
   this->forEach(
     [&norm](double& element) {
-      element / norm;
+      element /= norm;
     }
   );
 }

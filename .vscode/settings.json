@@ -86,10 +86,11 @@
     "random": "cpp",
     "functional": "cpp",
     "ranges": "cpp",
-    "span": "cpp"
+    "span": "cpp",
     "__hash_table": "cpp",
     "__node_handle": "cpp",
     "deque": "cpp"
   },
-  "C_Cpp.errorSquiggles": "disabled"
+  "C_Cpp.errorSquiggles": "disabled",
+  "makefile.makefilePath": "./build/MakeFile"
 }
