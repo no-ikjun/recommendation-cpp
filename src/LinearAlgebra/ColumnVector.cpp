@@ -140,26 +140,21 @@ void ColumnVector::print(bool compact) const {
 }
 
 void ColumnVector::serialize(std::ostream& os) const {
-  if (!os) {
-    throw std::runtime_error("Output stream is not ready");
-  }
-  os << this->getDimension() << " ";
-  for(int i = 0; i < this->getDimension(); ++i) {
-    if (!(os << (*this)(i) << " ")) {
-      throw std::runtime_error("Failed to write data");
-    }
+  int dimension = this->getDimension();
+  os.write(reinterpret_cast<const char*>(&dimension), sizeof(dimension));
+  for (int i = 0; i < dimension; ++i) {
+    double value = (*this)(i);
+    os.write(reinterpret_cast<const char*>(&value), sizeof(value));
   }
 }
 
 void ColumnVector::deserialize(std::istream& is) {
   int dimension;
-  if (!(is >> dimension)) { // dimension 값 읽기 실패 처리
-    throw std::runtime_error("Failed to read dimension");
-  }
-  this->data.resize(dimension); // dimension 기반으로 벡터 크기 조정
+  is.read(reinterpret_cast<char*>(&dimension), sizeof(dimension));
+  this->data.resize(dimension);
   for (int i = 0; i < dimension; ++i) {
-    if (!(is >> this->data[i])) { // 각 요소 읽기 실패 처리
-      throw std::runtime_error("Failed to read data");
-    }
+    double value;
+    is.read(reinterpret_cast<char*>(&value), sizeof(value));
+    this->data[i] = value;
   }
 }
