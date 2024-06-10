@@ -36,5 +36,18 @@ std::string Recommender::getRecommendation(User user, NewsDatabase* newsDatabase
       bestNewsId = news.getId();
     }
   }
+  user.addHistory(bestNewsId);
   return bestNewsId;
+}
+
+void Recommender::feedback(User user, NewsDatabase* newsDatabase, bool isBetter, double sensitivity){
+  std::vector<std::string> history = user.getHistory();
+  News news = newsDatabase->get(history[history.size() - 2]);
+  News prevNews = newsDatabase->get(history.back());
+  LinearAlgebra::ColumnVector userPreference = user.getPreference();
+  LinearAlgebra::ColumnVector newsVector = news.getEmbedding();
+  LinearAlgebra::ColumnVector prevNewsVector = prevNews.getEmbedding();
+  LinearAlgebra::ColumnVector diff = newsVector - prevNewsVector;
+  LinearAlgebra::ColumnVector newPreference = userPreference + diff * (isBetter ? sensitivity : -sensitivity);
+  user.setPreference(newPreference);
 }
