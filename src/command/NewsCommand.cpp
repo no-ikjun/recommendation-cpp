@@ -48,14 +48,14 @@ bool NewsCommand::printNews(std::string id) {
         std::cout << "긍정적인 의견을 선택하셨습니다." << std::endl;
         std::cout << "관심사를 재조정합니다." << std::endl;
         // 사용자 세션의 관심사를 업데이트
-        userDb->update(session->getUserId(), &updatedUserData);
+        userDb->update(&updatedUserData);
         std::cout << "Preferences updated successfully.\n";
         break;
       case 2:
         std::cout << "부정적인 의견을 선택하셨습니다." << std::endl;
         std::cout << "관심사를 재조정합니다." << std::endl;
         // 사용자 세션의 관심사를 업데이트
-        userDb->update(session->getUserId(), &updatedUserData);
+        userDb->update(&updatedUserData);
         std::cout << "Preferences updated successfully.\n";
         break;
       case 3:

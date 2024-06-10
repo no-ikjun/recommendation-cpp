@@ -100,10 +100,24 @@ void UserCommand::setPref(Recommender* recommender) {
   std::istringstream iss(input);
 
   try {
+    std::cout << "1" << std::endl;
     UserSession* session = UserSession::getInstance();
-    User updatedUserData = userDb->get(session->getUserId());
+    std::cout << "2" << std::endl;
+    std::string userId = session->getUserId();
+    std::cout << "3" << std::endl;
+    User updatedUserData = userDb->get(userId);
+    std::cout << "4" << std::endl;
     updatedUserData.setPreference(recommender->embedPreference(input));
-    userDb->update(session->getUserId(), &updatedUserData);
+    std::cout << "5" << std::endl;
+    updatedUserData.getPreference().print();
+    std::cout << "6" << std::endl;
+    userDb->update(&updatedUserData);
+    std::cout << "7" << std::endl;
+    userDb->get(userId).getPreference().print();
+    std::cout << "8" << std::endl;
+    userDb->saveToFile(userDb->get(userId));
+    std::cout << "9" << std::endl;
+    userDb->get(userId).getPreference().print();
     std::cout << "Preferences updated successfully.\n";
   } catch (const std::exception& e) {
     std::cerr << "Failed to update preferences: " << e.what() << std::endl;

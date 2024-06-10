@@ -95,9 +95,18 @@ void GlobalCommand::showUserMenu() {
     case 1:
       userCommand.setPref(this->recommender);
       break;
-    case 2:
-      newsCommand.printNews(this->recommender->getRecommendation((this->userDb->get(session->getUserId())), (this->newsDb)));
+    case 2: {
+      std::string userId = session->getUserId();
+      User user = this->userDb->get(userId);
+      user.getPreference().print();
+      std::vector<News> news = newsDb->loadFromFile();
+      std::cout << news.size() << std::endl;
+      std::string recommendedId = this->recommender->getRecommendation(user, this->newsDb);
+      std::cout << recommendedId << std::endl;
+      std::cout << this->newsDb->get(recommendedId).getContent() << std::endl;
+      newsCommand.printNews(recommendedId);
       break;
+    }
     case 3:
       session->logout();
       std::cout << "You have been successfully logged out." << std::endl;
