@@ -133,9 +133,9 @@ void ColumnVector::print(bool compact) const {
         << (i == 0 ? "": " ")
         << std::setw(2) << std::fixed << std::setprecision(2) << std::showpos 
         << (*this)(i)
-        << (i == this->getDimension() - 1 ? "]": ", ")
-      << std::endl;
+        << (i == this->getDimension() - 1 ? "]": ", ");
     }
+    std::cout << std::endl;
   }
 }
 
@@ -153,8 +153,13 @@ void ColumnVector::serialize(std::ostream& os) const {
 
 void ColumnVector::deserialize(std::istream& is) {
   int dimension;
-  this->data.resize(dimension);
-  for (int i = 0; i < this->getDimension(); ++i) {
-    is >> this->data[i];
+  if (!(is >> dimension)) { // dimension 값 읽기 실패 처리
+    throw std::runtime_error("Failed to read dimension");
+  }
+  this->data.resize(dimension); // dimension 기반으로 벡터 크기 조정
+  for (int i = 0; i < dimension; ++i) {
+    if (!(is >> this->data[i])) { // 각 요소 읽기 실패 처리
+      throw std::runtime_error("Failed to read data");
+    }
   }
 }

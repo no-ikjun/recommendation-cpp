@@ -29,10 +29,7 @@ void User::serialize(std::ostream& os) const {
   os.write(id.c_str(), id.size() + 1);
   os.write(name.c_str(), name.size() + 1);
   os.write(password.c_str(), password.size() + 1);
-  std::cout << "***" << std::endl;
-  preference.print();
   preference.serialize(os);
-  std::cout << "-----" << std::endl;
 }
 
 bool User::deserialize(std::istream& is) {

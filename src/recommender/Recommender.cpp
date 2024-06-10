@@ -3,17 +3,20 @@
 #include "LinearAlgebra/ColumnVector.h"
 #include "data/News.h"
 
+#include <iostream>
 #include <vector>
 #include <memory>
 
 Recommender::Recommender(Model* model_ptr) : model_ptr(model_ptr) {}
 
 void Recommender::embedContents(NewsDatabase& newsDatabase){
+  std::cout << "Embedding news contents..." << std::endl;
   std::vector<News> all_news = newsDatabase.loadFromFile();
   for (auto& news : all_news) {
     news.setEmbedding(this->model_ptr->embed(news.getContent()));
     newsDatabase.saveToFile(news);
   }
+  std::cout << "Done." << std::endl;
 }
 
 LinearAlgebra::ColumnVector Recommender::embedPreference(const std::string& preference){
