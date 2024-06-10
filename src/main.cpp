@@ -42,11 +42,12 @@ int main() {
   
   while (!session->isAuthenticated()) {
     globalCommand.showMenu();
-    if (session->isAuthenticated()) {
-      globalCommand.showUserMenu();
-      break;
-    }
   }
+
+  // 인증 후 사용자 메뉴 반복 실행
+  do {
+    globalCommand.showUserMenu();
+  } while (session->isAuthenticated()); // 인증 상태 유지되는 동안 반복
 
   // std::vector<User> userList = userDb->loadFromFile();
   // for (const auto& user : userList) {
