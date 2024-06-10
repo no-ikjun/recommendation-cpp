@@ -40,12 +40,24 @@ bool NewsCommand::printNews(std::string id) {
     int response;
     std::cin >> response;
 
+    UserSession* session = UserSession::getInstance();
+    User updatedUserData = userDb->get(session->getUserId());
+
     switch (response) {
       case 1:
+        std::cout << "긍정적인 의견을 선택하셨습니다." << std::endl;
+        std::cout << "관심사를 재조정합니다." << std::endl;
+        // 사용자 세션의 관심사를 업데이트
+        userDb->update(session->getUserId(), &updatedUserData);
+        std::cout << "Preferences updated successfully.\n";
+        break;
       case 2:
-        // 긍정 또는 부정 선택 시 함수 재호출
-        std::cout << (response == 1 ? "긍정적인 의견을 선택하셨습니다." : "부정적인 의견을 선택하셨습니다.") << std::endl;
-        return printNews(id); // 같은 뉴스를 다시 출력
+        std::cout << "부정적인 의견을 선택하셨습니다." << std::endl;
+        std::cout << "관심사를 재조정합니다." << std::endl;
+        // 사용자 세션의 관심사를 업데이트
+        userDb->update(session->getUserId(), &updatedUserData);
+        std::cout << "Preferences updated successfully.\n";
+        break;
       case 3:
         // 함수 종료
         std::cout << "함수를 종료합니다." << std::endl;
