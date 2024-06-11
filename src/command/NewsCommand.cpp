@@ -42,57 +42,37 @@ void printWrappedText(const std::string& text, int maxWidth) {
   std::cout << std::endl;
 }
 
-char promptOptionsAndSelect(const std::string& prompt, const std::vector<char>& options) {
-  std::cout << prompt << std::endl;
-  char selectedOption = '\0';
-  while (true) {
-    std::cout << "(";
-    for(const char& option : options) {
-      std::cout << option << "/";
-    }
-    std::cout << "\b\n";
-
-    std::cin.get(selectedOption);
-    for(int i = 0; i < options.size(); i++) {
-      if (selectedOption == options[i]) {
-        selectedOption = i;
-        break;
-      }
-    }
-    if (selectedOption != '\0') {
-      break;
-    }
-    std::cout << "Invalid option. Please try again. ";
-  }
-  return selectedOption;
+std::string promptInput(const std::string& prompt) {
+  std::string input;
+  std::cout << prompt << ": ";
+  std::getline(std::cin, input);
+  return input;
 }
 
-bool NewsCommand::printNews(std::string id) {
-  while (true) {
-    try {
-      News news = newsDb->get(id);
-      char selectedOption;
 
-      // Display news
-      int width = 80;
-      std::string title = news.getTitle();
-      int padding = (width - title.length()) / 2;
-      std::cout << std::string(padding, ' ') << GREEN << title << RESET << std::endl;
-      std::cout << CYAN;
-      printWrappedText(news.getContent(), width);
-      std::cout << RESET << std::endl;
-      selectedOption = promptOptionsAndSelect("Next(n) | Quit(q)", {'n', 'q'});
-      if (selectedOption == 'q') {
-        return false;
-      } else if(selectedOption == 'n') {
-        return true;
-      }
-    } catch (const std::exception& e) {
-      printError(e.what());
-      return false;  // 예외 발생 시 함수 종료
+bool NewsCommand::printNews(std::string id) {
+  try {
+    News news = newsDb->get(id);
+    std::string selectedOption;
+
+    // Display news
+    int width = 80;
+    std::string title = news.getTitle();
+    int padding = (width - title.length()) / 2;
+    std::cout << std::string(padding, ' ') << GREEN << title << RESET << std::endl;
+    std::cout << CYAN;
+    printWrappedText(news.getContent(), width);
+    std::cout << RESET << std::endl;
+    selectedOption = promptInput("Next(n) | Quit(q)");
+    if (selectedOption == "q" || selectedOption == "Q") {
+      return false;
+    } else if(selectedOption == "n" || selectedOption == "N") {
+      return true;
     }
+  } catch (const std::exception& e) {
+    printError(e.what());
+    return false;  // 예외 발생 시 함수 종료
   }
-  return true;
 }
 
 void NewsCommand::printError(const std::string& message) {

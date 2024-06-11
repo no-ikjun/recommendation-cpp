@@ -15,30 +15,13 @@ const std::string CYAN = "\033[36m";
 const std::string MAGENTA = "\033[35m";
 const std::string RESET = "\033[0m";
 
-char promptOptionsAndGetResponse(const std::string& prompt, const std::vector<char>& options) {
-  std::cout << prompt << std::endl;
-  char selectedOption = '\0';
-  while (true) {
-    std::cout << "(";
-    for(const char& option : options) {
-      std::cout << option << "/";
-    }
-    std::cout << "\b\n";
-
-    std::cin.get(selectedOption);
-    for(int i = 0; i < options.size(); i++) {
-      if (selectedOption == options[i]) {
-        selectedOption = i;
-        break;
-      }
-    }
-    if (selectedOption != '\0') {
-      break;
-    }
-    std::cout << "Invalid option. Please try again. ";
-  }
-  return selectedOption;
+std::string GlobalPromptInput(const std::string& prompt) {
+  std::string input;
+  std::cout << prompt << ": ";
+  std::getline(std::cin, input);
+  return input;
 }
+
 
 bool GlobalCommand::continuePrompt() {
   std::string response;
@@ -126,18 +109,19 @@ void GlobalCommand::showUserMenu() {
         User user = this->userDb->get(userId);
         std::string recommendedId = this->recommender->getRecommendation(user, this->newsDb);
         while(true) {
-          bool quit = newsCommand.printNews(recommendedId);
-          if(!quit && !user.getHistory().empty()) {
+          bool showNext = newsCommand.printNews(recommendedId);
+          if(showNext) {
             // Request user feedback
-            char selectedOption;
-            selectedOption = promptOptionsAndGetResponse("Did you enjoy this news than the last one? (Yes | No | Quit)", {'y', 'n', 'q'});
-            if (selectedOption == 'q') {
+            std::string selectedOption;
+            selectedOption = GlobalPromptInput("Did you enjoy this news than the last one? (Y | N | Quit)");
+            if (selectedOption == "Quit" || selectedOption == "quit") {
               break;
             }
             UserSession* session = UserSession::getInstance();
-            recommender->feedback(user, newsDb, (selectedOption == 'y' ? true : false), 1.2);
-            User updatedUserData = user;
-            userDb->update(&updatedUserData);
+            recommender->feedback(user, newsDb, ((selectedOption == "Y" || selectedOption == "y") ? true : false), 1.2);
+            // User updatedUserData = user;
+            // userDb->update(&updatedUserData);
+            userDb->update(&user);
             std::cout << "Preferences updated successfully.\n";
           }
         }
