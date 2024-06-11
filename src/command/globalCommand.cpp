@@ -111,6 +111,7 @@ void GlobalCommand::showUserMenu() {
         while(true) {
           bool showNext = newsCommand.printNews(recommendedId);
           if(showNext) {
+            std::cout << "show next" << std::endl;
             // Request user feedback
             std::string selectedOption;
             selectedOption = GlobalPromptInput("Did you enjoy this news than the last one? (Y | N | Quit)");
@@ -118,11 +119,15 @@ void GlobalCommand::showUserMenu() {
               break;
             }
             UserSession* session = UserSession::getInstance();
+            // Update user preference
             recommender->feedback(user, newsDb, ((selectedOption == "Y" || selectedOption == "y") ? true : false), 1.2);
-            // User updatedUserData = user;
-            // userDb->update(&updatedUserData);
+            User updatedUserData = user;
+            userDb->update(&updatedUserData);
             userDb->update(&user);
+            
             std::cout << "Preferences updated successfully.\n";
+          } else {
+            break;
           }
         }
         break;

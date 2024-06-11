@@ -46,6 +46,9 @@ std::string promptInput(const std::string& prompt) {
   std::string input;
   std::cout << prompt << ": ";
   std::getline(std::cin, input);
+  if (input.empty()) {
+    std::getline(std::cin, input);
+  }
   return input;
 }
 
@@ -63,15 +66,20 @@ bool NewsCommand::printNews(std::string id) {
     std::cout << CYAN;
     printWrappedText(news.getContent(), width);
     std::cout << RESET << std::endl;
-    selectedOption = promptInput("Next(n) | Quit(q)");
-    if (selectedOption == "q" || selectedOption == "Q") {
-      return false;
-    } else if(selectedOption == "n" || selectedOption == "N") {
-      return true;
-    }
+    
+    do {
+      selectedOption = promptInput("Next(n) | Quit(q)");
+      if (selectedOption == "q" || selectedOption == "Q") {
+        return false;
+      } else if (selectedOption == "n" || selectedOption == "N") {
+        return true;
+      } else {
+        std::cout << RED << "유효하지 않은 입력입니다. 다시 시도해주세요." << RESET << std::endl;
+      }
+    } while (true);
   } catch (const std::exception& e) {
     printError(e.what());
-    return false;  // 예외 발생 시 함수 종료
+    return false;
   }
 }
 
