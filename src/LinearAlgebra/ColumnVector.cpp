@@ -133,28 +133,28 @@ void ColumnVector::print(bool compact) const {
         << (i == 0 ? "": " ")
         << std::setw(2) << std::fixed << std::setprecision(2) << std::showpos 
         << (*this)(i)
-        << (i == this->getDimension() - 1 ? "]": ", ")
-      << std::endl;
+        << (i == this->getDimension() - 1 ? "]": ", ");
     }
+    std::cout << std::endl;
   }
 }
 
 void ColumnVector::serialize(std::ostream& os) const {
-  if (!os) {
-    throw std::runtime_error("Output stream is not ready");
-  }
-  os << this->getDimension() << " ";
-  for(int i = 0; i < this->getDimension(); ++i) {
-    if (!(os << (*this)(i) << " ")) {
-      throw std::runtime_error("Failed to write data");
-    }
+  int dimension = this->getDimension();
+  os.write(reinterpret_cast<const char*>(&dimension), sizeof(dimension));
+  for (int i = 0; i < dimension; ++i) {
+    double value = (*this)(i);
+    os.write(reinterpret_cast<const char*>(&value), sizeof(value));
   }
 }
 
 void ColumnVector::deserialize(std::istream& is) {
   int dimension;
+  is.read(reinterpret_cast<char*>(&dimension), sizeof(dimension));
   this->data.resize(dimension);
-  for (int i = 0; i < this->getDimension(); ++i) {
-    is >> this->data[i];
+  for (int i = 0; i < dimension; ++i) {
+    double value;
+    is.read(reinterpret_cast<char*>(&value), sizeof(value));
+    this->data[i] = value;
   }
 }

@@ -25,14 +25,19 @@ void User::setPreference(const LinearAlgebra::ColumnVector& preference) {
   this->preference = preference;
 }
 
+void User::addHistory(const std::string& newsId) {
+  history.push_back(newsId);
+}
+
+std::vector<std::string> User::getHistory() const {
+  return history;
+}
+
 void User::serialize(std::ostream& os) const {
   os.write(id.c_str(), id.size() + 1);
   os.write(name.c_str(), name.size() + 1);
   os.write(password.c_str(), password.size() + 1);
-  std::cout << "***" << std::endl;
-  preference.print();
   preference.serialize(os);
-  std::cout << "-----" << std::endl;
 }
 
 bool User::deserialize(std::istream& is) {

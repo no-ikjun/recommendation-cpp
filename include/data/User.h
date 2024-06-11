@@ -18,6 +18,8 @@ public:
   std::string getPassword() const;
   LinearAlgebra::ColumnVector getPreference() const;
   void setPreference(const LinearAlgebra::ColumnVector& preference);
+  void addHistory(const std::string& newsId);
+  std::vector<std::string> getHistory() const;
 
   void serialize(std::ostream& os) const;
   bool deserialize(std::istream& is);
@@ -27,6 +29,7 @@ private:
   std::string name;
   std::string password;
   LinearAlgebra::ColumnVector preference;
+  std::vector<std::string> history;
 };
 
 #endif // USER_H

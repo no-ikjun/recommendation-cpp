@@ -74,35 +74,33 @@ std::vector<User> UserDatabase::loadFromFile() {
 }
 
 void UserDatabase::update(User* updatedUser) {
-  if (updatedUser) {
-    std::vector<User> userList = loadFromFile();
-    bool updated = false;
-    for (auto& user : userList) {
-      if (user.getId() == updatedUser->getId()) {
-        user = *updatedUser;
-        updated = true;
-        break;
-      }
-    }
-    if (updated) {
-      std::ofstream file(filename, std::ios::binary);
-      file.close();
-      std::ofstream clearFile(filename, std::ios::trunc);
-      clearFile.close();
-      std::ofstream writeFile(filename, std::ios::binary);
-      if (writeFile) {
-        for (const auto& user : userList) {
-          user.serialize(writeFile);
-        }
-      } else {
-        std::cerr << "Cannot open file " << filename << " for writing." << std::endl;
-      }
-      writeFile.close();
-      std::cout << "User with id" << updatedUser->getId() << std::endl;
-      this->get(updatedUser->getId()).getPreference().print();
-      std::cout << "updated successfully ****." << std::endl;
-    }
-  } else {
+  if (!updatedUser) {
     std::cerr << "Error: Null user pointer passed to update function." << std::endl;
+    return;
+  }
+  std::vector<User> userList = loadFromFile();
+  bool updated = false;
+  for (auto& user : userList) {
+    if (user.getId() == updatedUser->getId()) {
+      user = *updatedUser;
+      updated = true;
+      break;
+    }
+  }
+  if (updated) {
+    std::ofstream file(filename, std::ios::binary | std::ios::trunc);
+    if (!file) {
+      std::cerr << "Cannot open file " << filename << " for writing." << std::endl;
+      return;
+    }
+    for (const auto& user : userList) {
+      user.serialize(file);
+      if (!file) {
+        std::cerr << "Failed to write user data to file." << std::endl;
+        return;
+      }
+    }
+    file.close();
+    std::cout << "User with id " << updatedUser->getId() << " updated successfully." << std::endl;
   }
 }

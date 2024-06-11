@@ -15,6 +15,31 @@ const std::string CYAN = "\033[36m";
 const std::string MAGENTA = "\033[35m";
 const std::string RESET = "\033[0m";
 
+char promptOptionsAndGetResponse(const std::string& prompt, const std::vector<char>& options) {
+  std::cout << prompt << std::endl;
+  char selectedOption = '\0';
+  while (true) {
+    std::cout << "(";
+    for(const char& option : options) {
+      std::cout << option << "/";
+    }
+    std::cout << "\b\n";
+
+    std::cin.get(selectedOption);
+    for(int i = 0; i < options.size(); i++) {
+      if (selectedOption == options[i]) {
+        selectedOption = i;
+        break;
+      }
+    }
+    if (selectedOption != '\0') {
+      break;
+    }
+    std::cout << "Invalid option. Please try again. ";
+  }
+  return selectedOption;
+}
+
 bool GlobalCommand::continuePrompt() {
   std::string response;
   while (true) {
@@ -68,53 +93,67 @@ void GlobalCommand::showMenu() {
 }
 
 void GlobalCommand::showUserMenu() {
-  int choice = 0;
-  UserSession* session = UserSession::getInstance();
-  std::cout << YELLOW << "\n===== Welcome, " << session->getUserName() << " =====\n" << RESET;
-  std::cout << GREEN << "1. Set Preference - Update your news preference" << RESET << std::endl;
-  std::cout << GREEN << "2. Get Recommendation - Get news recommendation based on your preference" << RESET << std::endl;
-  std::cout << RED << "3. Sign Out - Log out from your account" << RESET << std::endl;
-  std::cout << CYAN << "Enter your choice (1-3): " << RESET;
+  while (true) {
+    int choice = 0;
+    UserSession* session = UserSession::getInstance();
+    std::cout << YELLOW << "\n===== Welcome, " << session->getUserName() << " =====\n" << RESET;
+    std::cout << GREEN << "1. Set Preference - Update your news preference" << RESET << std::endl;
+    std::cout << GREEN << "2. Get Recommendation - Get news recommendation based on your preference" << RESET << std::endl;
+    std::cout << RED << "3. Sign Out - Log out from your account" << RESET << std::endl;
+    std::cout << CYAN << "Enter your choice (1-3): " << RESET;
 
-  while (!(std::cin >> choice) || choice < 1 || choice > 3) {
-    std::cout << RED << "Invalid input. Please enter a number between 1 and 3: " << RESET;
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-  }
-
-  UserCommand userCommand(userDb);
-  NewsCommand newsCommand(newsDb, userDb);
-
-  #if defined(_WIN32) || defined(_WIN64)
-  system("cls"); // Windows
-  #else
-  system("clear"); // UNIX/Linux/macOS
-  #endif
-
-  switch (choice) {
-    case 1:
-      userCommand.setPref(this->recommender);
-      break;
-    case 2: {
-      std::string userId = session->getUserId();
-      User user = this->userDb->get(userId);
-      user.getPreference().print();
-      std::vector<News> news = newsDb->loadFromFile();
-      std::cout << news.size() << std::endl;
-      std::string recommendedId = this->recommender->getRecommendation(user, this->newsDb);
-      std::cout << recommendedId << std::endl;
-      std::cout << this->newsDb->get(recommendedId).getContent() << std::endl;
-      newsCommand.printNews(recommendedId);
-      break;
+    while (!(std::cin >> choice) || choice < 1 || choice > 3) {
+      std::cout << RED << "Invalid input. Please enter a number between 1 and 3: " << RESET;
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
-    case 3:
-      session->logout();
-      std::cout << "You have been successfully logged out." << std::endl;
-      break;
-    default:
-      std::cout << "Unknown error occurred." << std::endl;
+
+    UserCommand userCommand(userDb);
+    NewsCommand newsCommand(newsDb, userDb);
+
+    #if defined(_WIN32) || defined(_WIN64)
+    system("cls"); // Windows
+    #else
+    system("clear"); // UNIX/Linux/macOS
+    #endif
+
+    switch (choice) {
+      case 1:
+        userCommand.setPref(this->recommender);
+        break;
+      case 2: {
+        std::string userId = session->getUserId();
+        User user = this->userDb->get(userId);
+        std::string recommendedId = this->recommender->getRecommendation(user, this->newsDb);
+        while(true) {
+          bool quit = newsCommand.printNews(recommendedId);
+          if(!quit && !user.getHistory().empty()) {
+            // Request user feedback
+            char selectedOption;
+            selectedOption = promptOptionsAndGetResponse("Did you enjoy this news than the last one? (Yes | No | Quit)", {'y', 'n', 'q'});
+            if (selectedOption == 'q') {
+              break;
+            }
+            UserSession* session = UserSession::getInstance();
+            recommender->feedback(user, newsDb, (selectedOption == 'y' ? true : false), 1.2);
+            User updatedUserData = user;
+            userDb->update(&updatedUserData);
+            std::cout << "Preferences updated successfully.\n";
+          }
+        }
+        break;
+      }
+      case 3:
+        session->logout();
+        std::cout << "You have been successfully logged out." << std::endl;
+        this->printGoodbye();
+        return;  // 로그아웃 선택 시 루프를 종료하고 함수를 빠져나옴
+      default:
+        std::cout << "Unknown error occurred." << std::endl;
+    }
   }
 }
+
 
 void GlobalCommand::printWelcome() {
   std::cout << YELLOW << R"(
@@ -130,6 +169,7 @@ void GlobalCommand::printWelcome() {
 }
 
 void GlobalCommand::printGoodbye() {
+  std::cout << std::endl;
   std::cout << "Thank you for using News Today. Goodbye!" << std::endl;
 }
 

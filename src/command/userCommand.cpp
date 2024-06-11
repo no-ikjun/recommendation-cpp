@@ -87,38 +87,24 @@ void UserCommand::setPref(Recommender* recommender) {
   User userData = userDb->get(session->getUserId());
   LinearAlgebra::ColumnVector prefData = userData.getPreference();
   std::cout << "Current preferences:\n";
-  prefData.print();
 
-  std::cout << "Setting preferences...\n";
   std::cout << "Enter your interests separated by spaces (e.g., technology science business): ";
 
-  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ensure buffer is clear
+  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
   std::string input;
-  std::getline(std::cin, input);  // 전체 라인 입력 받기
+  std::getline(std::cin, input);
 
   std::istringstream iss(input);
 
   try {
-    std::cout << "1" << std::endl;
     UserSession* session = UserSession::getInstance();
-    std::cout << "2" << std::endl;
     std::string userId = session->getUserId();
-    std::cout << "3" << std::endl;
     User updatedUserData = userDb->get(userId);
-    std::cout << "4" << std::endl;
     updatedUserData.setPreference(recommender->embedPreference(input));
-    std::cout << "5" << std::endl;
-    updatedUserData.getPreference().print();
-    std::cout << "6" << std::endl;
     userDb->update(&updatedUserData);
-    std::cout << "7" << std::endl;
-    userDb->get(userId).getPreference().print();
-    std::cout << "8" << std::endl;
     userDb->saveToFile(userDb->get(userId));
-    std::cout << "9" << std::endl;
-    userDb->get(userId).getPreference().print();
-    std::cout << "Preferences updated successfully.\n";
+    std::cout << "Preferences updated successfully." << std::endl;
   } catch (const std::exception& e) {
     std::cerr << "Failed to update preferences: " << e.what() << std::endl;
   }
