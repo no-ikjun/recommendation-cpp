@@ -12,6 +12,9 @@ public:
        const std::string& name,
        const std::string& password,
        const LinearAlgebra::ColumnVector& preference);
+  
+  // User(const User& other);
+  // User& operator=(const User& other);
 
   std::string getId() const;
   std::string getName() const;

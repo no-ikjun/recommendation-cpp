@@ -2,6 +2,7 @@
 #include "recommender/Model.h"
 #include "LinearAlgebra/ColumnVector.h"
 #include "data/News.h"
+#include "db/UserDatabase.h"
 
 #include <iostream>
 #include <vector>
@@ -37,6 +38,8 @@ std::string Recommender::getRecommendation(User user, NewsDatabase* newsDatabase
     }
   }
   user.addHistory(bestNewsId);
+  UserDatabase* userDb = UserDatabase::getInstance("./data/bin/user_database.bin");
+  userDb->update(&user);
   return bestNewsId;
 }
 

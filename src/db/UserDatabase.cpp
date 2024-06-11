@@ -66,7 +66,7 @@ std::vector<User> UserDatabase::loadFromFile() {
     return userList;
   }
   User user;
-  while (user.deserialize(file)) {
+  while (file && user.deserialize(file)) {
     userList.push_back(user);
   }
   file.close();
