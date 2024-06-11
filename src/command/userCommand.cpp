@@ -62,7 +62,6 @@ void UserCommand::signIn() {
 
     try {
       User user = userDb->get(id);
-      std::cout << "User found: " << user.getName() << std::endl;
       if (user.getPassword() == password) {
         UserSession* session = UserSession::getInstance();
         session->login(user.getId(), user.getName());
