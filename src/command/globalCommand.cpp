@@ -155,6 +155,14 @@ void GlobalCommand::printWelcome() {
 void GlobalCommand::printGoodbye() {
   std::cout << std::endl;
   std::cout << "Thank you for using News Today. Goodbye!" << std::endl;
+  std::cout << YELLOW << R"(
+      ____                 _   ____             
+     / ___| ___   ___   __| | | __ ) _   _  ___ 
+    | |  _ / _ \ / _ \ / _` | |  _ \| | | |/ _ \
+    | |_| | (_) | (_) | (_| | | |_) | |_| |  __/
+     \____|\___/ \___/ \__,_| |____/ \__, |\___|
+                                    |___/                                           
+    )" << RESET << std::endl;
 }
 
 void GlobalCommand::printError(const std::string& message) {
