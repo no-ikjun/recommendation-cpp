@@ -107,7 +107,10 @@ void GlobalCommand::showUserMenu() {
       case 2: {
         std::string userId = session->getUserId();
         User user = this->userDb->get(userId);
+        std::cout << user.getId() << std::endl;
         std::string recommendedId = this->recommender->getRecommendation(user, this->newsDb);
+        user.getPreference().print();
+        std::cout << recommendedId << std::endl;
         while(true) {
           bool showNext = newsCommand.printNews(recommendedId);
           if(showNext) {

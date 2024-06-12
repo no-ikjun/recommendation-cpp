@@ -30,7 +30,7 @@ int main() {
   Word2Vec word2vec(300, 3, vocabulary);  
   word2vec.loadWeights("./data/bin/weights");
   Recommender recommender(&word2vec);
-  recommender.embedContents(*newsDb); //TODO: save news with embeddings
+  recommender.embedContents(*newsDb);
 
   GlobalCommand globalCommand(userDb, newsDb, &recommender);
   globalCommand.printWelcome();

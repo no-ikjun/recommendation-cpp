@@ -8,7 +8,7 @@
 #include <vector>
 #include <memory>
 
-Recommender::Recommender(Model* model_ptr) : model_ptr(model_ptr) {}
+Recommender::Recommender(Model* model_ptr) : model_ptr(model_ptr), prevNewsId("1"), lastNewsId("1") {}
 
 void Recommender::embedContents(NewsDatabase& newsDatabase){
   std::cout << "Embedding news contents..." << std::endl;
@@ -37,19 +37,27 @@ std::string Recommender::getRecommendation(User user, NewsDatabase* newsDatabase
       bestNewsId = news.getId();
     }
   }
-  user.addHistory(bestNewsId);
+  std::cout << "bestNewsId: " << bestNewsId << std::endl;
+  std::cout << "bestScore" << bestScore << std::endl;
   UserDatabase* userDb = UserDatabase::getInstance("./data/bin/user_database.bin");
   userDb->update(&user);
+  prevNewsId = lastNewsId;
+  lastNewsId = bestNewsId;
   return bestNewsId;
 }
 
-void Recommender::feedback(User user, NewsDatabase* newsDatabase, bool isBetter, double sensitivity){
+void Recommender::feedback(User& user, NewsDatabase* newsDatabase, bool isBetter, double sensitivity){
   std::vector<std::string> history = user.getHistory();
-  News news = newsDatabase->get(history[history.size() - 2]);
-  News prevNews = newsDatabase->get(history.back());
+  for(auto& id : history){
+    std::cout << id << std::endl;
+  }
+  News news = newsDatabase->get(lastNewsId);
+  std::cout << "news: " << news.getId() << std::endl;
+  News prevNews = newsDatabase->get(prevNewsId);
+  std::cout << "prevNews: " << prevNews.getId() << std::endl;
   LinearAlgebra::ColumnVector userPreference = user.getPreference();
-  LinearAlgebra::ColumnVector newsVector = news.getEmbedding();
-  LinearAlgebra::ColumnVector prevNewsVector = prevNews.getEmbedding();
+  LinearAlgebra::ColumnVector newsVector = model_ptr->embed(news.getContent());
+  LinearAlgebra::ColumnVector prevNewsVector = model_ptr->embed(prevNews.getContent());
   LinearAlgebra::ColumnVector diff = newsVector - prevNewsVector;
   LinearAlgebra::ColumnVector newPreference = userPreference + diff * (isBetter ? sensitivity : -sensitivity);
   user.setPreference(newPreference);
