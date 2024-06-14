@@ -5,6 +5,7 @@
 #include "db/NewsDatabase.h"
 #include "data/Data.h"
 #include "recommender/Model.h"
+#include "db/UserDatabase.h"
 
 #include <memory>
 #include <string>
@@ -16,7 +17,7 @@ public:
   void embedContents(NewsDatabase&);
   LinearAlgebra::ColumnVector embedPreference(const std::string&);
   std::string getRecommendation(User, NewsDatabase*);
-  void feedback(User&, NewsDatabase*, bool isBetter, double sensitivity);
+  void feedback(User&, NewsDatabase*, bool isBetter, double sensitivity, UserDatabase *userDb);
 
 private:
   Model* model_ptr;

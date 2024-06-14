@@ -107,14 +107,11 @@ void GlobalCommand::showUserMenu() {
       case 2: {
         std::string userId = session->getUserId();
         User user = this->userDb->get(userId);
-        std::cout << user.getId() << std::endl;
         std::string recommendedId = this->recommender->getRecommendation(user, this->newsDb);
-        user.getPreference().print();
-        std::cout << recommendedId << std::endl;
+        //std::cout << recommendedId << std::endl;
         while(true) {
           bool showNext = newsCommand.printNews(recommendedId);
           if(showNext) {
-            std::cout << "show next" << std::endl;
             // Request user feedback
             std::string selectedOption;
             selectedOption = GlobalPromptInput("Did you enjoy this news than the last one? (Y | N | Quit)");
@@ -123,11 +120,11 @@ void GlobalCommand::showUserMenu() {
             }
             UserSession* session = UserSession::getInstance();
             // Update user preference
-            recommender->feedback(user, newsDb, ((selectedOption == "Y" || selectedOption == "y") ? true : false), 1.2);
+            recommender->feedback(user, newsDb, ((selectedOption == "Y" || selectedOption == "y") ? true : false), 1.2, userDb);
             User updatedUserData = user;
             userDb->update(&updatedUserData);
             userDb->update(&user);
-            
+
             std::cout << "Preferences updated successfully.\n";
           } else {
             break;
@@ -148,6 +145,11 @@ void GlobalCommand::showUserMenu() {
 
 
 void GlobalCommand::printWelcome() {
+  #if defined(_WIN32) || defined(_WIN64)
+  system("cls"); // Windows
+  #else
+  system("clear"); // UNIX/Linux/macOS
+  #endif
   std::cout << YELLOW << R"(
      ___   ___  ____    ____            _           _   
     / _ \ / _ \|  _ \  |  _ \ _ __ ___ (_) ___  ___| |_ 

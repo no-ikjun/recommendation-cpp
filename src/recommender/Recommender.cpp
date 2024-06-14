@@ -37,8 +37,8 @@ std::string Recommender::getRecommendation(User user, NewsDatabase* newsDatabase
       bestNewsId = news.getId();
     }
   }
-  std::cout << "bestNewsId: " << bestNewsId << std::endl;
-  std::cout << "bestScore" << bestScore << std::endl;
+  // std::cout << "bestNewsId: " << bestNewsId << std::endl;
+  // std::cout << "bestScore" << bestScore << std::endl;
   UserDatabase* userDb = UserDatabase::getInstance("./data/bin/user_database.bin");
   userDb->update(&user);
   prevNewsId = lastNewsId;
@@ -46,19 +46,22 @@ std::string Recommender::getRecommendation(User user, NewsDatabase* newsDatabase
   return bestNewsId;
 }
 
-void Recommender::feedback(User& user, NewsDatabase* newsDatabase, bool isBetter, double sensitivity){
+void Recommender::feedback(User& user, NewsDatabase* newsDatabase, bool isBetter, double sensitivity, UserDatabase* userDb){
   std::vector<std::string> history = user.getHistory();
-  for(auto& id : history){
-    std::cout << id << std::endl;
-  }
+  // for(auto& id : history){
+  //   std::cout << id << std::endl;
+  // }
   News news = newsDatabase->get(lastNewsId);
-  std::cout << "news: " << news.getId() << std::endl;
   News prevNews = newsDatabase->get(prevNewsId);
-  std::cout << "prevNews: " << prevNews.getId() << std::endl;
   LinearAlgebra::ColumnVector userPreference = user.getPreference();
   LinearAlgebra::ColumnVector newsVector = model_ptr->embed(news.getContent());
   LinearAlgebra::ColumnVector prevNewsVector = model_ptr->embed(prevNews.getContent());
   LinearAlgebra::ColumnVector diff = newsVector - prevNewsVector;
+
   LinearAlgebra::ColumnVector newPreference = userPreference + diff * (isBetter ? sensitivity : -sensitivity);
+
+  user.setPreference(this->embedPreference("technology science business"));
+
   user.setPreference(newPreference);
+  userDb->update(&user);
 }
